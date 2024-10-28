@@ -5,13 +5,15 @@ public enum TokenType
 
     SEMI_COLON(";"),
     COLON(":"),
+    DOT("."),
+    COMMA(","),
 
     //Braces
     BRACE_OPEN("\\("),
     BRACE_CLOSED("\\)"),
     BRACKET_OPEN("\\["),
     BRACKET_CLOSED("\\]"),
-    CURL_OPEN("\\{"),
+    CURLY_OPEN("\\{"),
     CURLY_CLOSED("\\}"),
     ARROW_OPEN("<"), //! Handle this
     ARROW_CLOSED(">"), //! Handle this
@@ -31,9 +33,9 @@ public enum TokenType
     EQUALITY("=="),
     INEQUALITY("!="),
     GREATER_THAN(">"),
-    GREATER_THAN_OR_EQUAL(">"),
+    GREATER_THAN_OR_EQUAL(">="),
     LESS_THAN("<"),
-    LESS_THAN_OR_EQUAL("<"),
+    LESS_THAN_OR_EQUAL("<="),
 
     //Bit-Wise
     BIT_SHIFT_LEFT("<<"),
@@ -43,6 +45,22 @@ public enum TokenType
     BITWISE_OR("\\|"),
     BITWISE_XOR("\\^"),
     BITWISE_NOT("~"),
+
+    // Multi-character operators
+    BIT_SHIFT_LEFT_EQUALS("<<="),
+    BIT_SHIFT_RIGHT_EQUALS(">>="),
+    BIT_SHIFT_RIGHT_UNSIGNED_EQUALS(">>>="),
+    ADDITION_ASSIGN("+="),
+    SUBTRACTION_ASSIGN("-="),
+    MULTIPLICATION_ASSIGN("*="),
+    DIVISION_ASSIGN("/="),
+    MODULO_ASSIGN("%="),
+    BITWISE_AND_ASSIGN("&="),
+    BITWISE_OR_ASSIGN("|="),
+    BITWISE_XOR_ASSIGN("^="),
+    INCREMENT("++"),
+    DECREMENT("--"),
+    DOUBLE_COLON("::"),
 
     //Types
     INT8("int8"),
@@ -66,6 +84,7 @@ public enum TokenType
     BOOL("bool"),
     VOID("void"),
     TYPE("type"),
+    LAMBDA("lambda"),
 
     VAR("var"),
 
@@ -141,16 +160,31 @@ public enum TokenType
     TRUE("true"),
     FALSE("false"),
     INT_LITERAL("^-?(?:0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[1-9][0-9_]*|0)"),
-    FLOAT_LITERAL("^\\d[\\d_]*)(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d[\\d_]*)?"),
+    FLOAT_LITERAL("^(\\d[\\d_]*)(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d[\\d_]*)?"),
     CHAR_LITERAL("^'(\\\\.|[^\\\\'])'"),
     RUNE_LITERAL("^'(\\\\u[0-9A-Fa-f]{4}|\\\\U[0-9A-Fa-f]{8}|[^\\\\'])'"),
-    STRING_LITERAL("^\"(?:\\\\.|[^\"\\\\])*\"");
+    STRING_LITERAL("^\"(?:\\\\.|[^\"\\\\])*\""),
+
+    START("[]"),
+    END("[]"),
+    INVALID("[]"),
+    COMMENT("[]");
 
 
-    final String regex;
+    public final String regex;
 
     TokenType(String regex)
     {
         this.regex = regex;
+    }
+
+    public boolean isStored()
+    {
+        return switch (this)
+        {
+            case IDENTIFIER, INT_LITERAL, FLOAT_LITERAL,
+                 CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL -> true;
+            default -> false;
+        };
     }
 }
