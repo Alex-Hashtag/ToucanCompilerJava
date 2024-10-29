@@ -17,58 +17,20 @@ public class TokenStream
     static
     {
         // Multi-character operators
-        multiCharOperatorMap.put("<<=", BIT_SHIFT_LEFT_EQUALS);
-        multiCharOperatorMap.put(">>=", BIT_SHIFT_RIGHT_EQUALS);
-        multiCharOperatorMap.put(">>>=", BIT_SHIFT_RIGHT_UNSIGNED_EQUALS);
-        multiCharOperatorMap.put("<<", BIT_SHIFT_LEFT);
-        multiCharOperatorMap.put(">>", BIT_SHIFT_RIGHT);
-        multiCharOperatorMap.put(">>>", BIT_SHIFT_RIGHT_UNSIGNED);
-        multiCharOperatorMap.put("==", EQUALITY);
-        multiCharOperatorMap.put("!=", INEQUALITY);
-        multiCharOperatorMap.put(">=", GREATER_THAN_OR_EQUAL);
-        multiCharOperatorMap.put("<=", LESS_THAN_OR_EQUAL);
-        multiCharOperatorMap.put("+=", ADDITION_ASSIGN);
-        multiCharOperatorMap.put("-=", SUBTRACTION_ASSIGN);
-        multiCharOperatorMap.put("*=", MULTIPLICATION_ASSIGN);
-        multiCharOperatorMap.put("/=", DIVISION_ASSIGN);
-        multiCharOperatorMap.put("%=", MODULO_ASSIGN);
-        multiCharOperatorMap.put("&=", BITWISE_AND_ASSIGN);
-        multiCharOperatorMap.put("|=", BITWISE_OR_ASSIGN);
-        multiCharOperatorMap.put("^=", BITWISE_XOR_ASSIGN);
-        multiCharOperatorMap.put("++", INCREMENT);
-        multiCharOperatorMap.put("--", DECREMENT);
-        multiCharOperatorMap.put("->", ARROW);
-        multiCharOperatorMap.put("::", DOUBLE_COLON);
-        multiCharOperatorMap.put("and", LOGICAL_AND);
-        multiCharOperatorMap.put("or", LOGICAL_OR);
+        for (TokenType type : List.of(BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS, BIT_SHIFT_LEFT,
+                BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED, EQUALITY, INEQUALITY, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, ADDITION_ASSIGN,
+                SUBTRACTION_ASSIGN, MULTIPLICATION_ASSIGN, DIVISION_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN,
+                BITWISE_XOR_ASSIGN, INCREMENT, DECREMENT, ARROW, DOUBLE_COLON, LOGICAL_AND, LOGICAL_OR))
+            multiCharOperatorMap.put(type.regex, type);
     }
 
     static
     {
         // Single-character tokens
-        singleCharTokenMap.put(";", SEMI_COLON);
-        singleCharTokenMap.put(":", COLON);
-        singleCharTokenMap.put("(", BRACE_OPEN);
-        singleCharTokenMap.put(")", BRACE_CLOSED);
-        singleCharTokenMap.put("[", BRACKET_OPEN);
-        singleCharTokenMap.put("]", BRACKET_CLOSED);
-        singleCharTokenMap.put("{", CURLY_OPEN);
-        singleCharTokenMap.put("}", CURLY_CLOSED);
-        singleCharTokenMap.put("<", LESS_THAN);
-        singleCharTokenMap.put(">", GREATER_THAN);
-        singleCharTokenMap.put("=", ASSIGNMENT);
-        singleCharTokenMap.put("+", ADDITION);
-        singleCharTokenMap.put("-", SUBTRACTION);
-        singleCharTokenMap.put("*", MULTIPLICATION);
-        singleCharTokenMap.put("/", DIVISION);
-        singleCharTokenMap.put("%", MODULO);
-        singleCharTokenMap.put("&", BITWISE_AND);
-        singleCharTokenMap.put("|", BITWISE_OR);
-        singleCharTokenMap.put("^", BITWISE_XOR);
-        singleCharTokenMap.put("~", BITWISE_NOT);
-        singleCharTokenMap.put("!", LOGICAL_NOT);
-        singleCharTokenMap.put(".", DOT);
-        singleCharTokenMap.put(",", COMMA);
+        for (TokenType type : List.of(SEMI_COLON, COLON, BRACE_OPEN, BRACE_CLOSED, BRACKET_OPEN, BRACKET_CLOSED, CURLY_OPEN, CURLY_CLOSED,
+                LESS_THAN, GREATER_THAN, ASSIGNMENT, ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, MODULO, BITWISE_AND, BITWISE_OR,
+                BITWISE_XOR, BITWISE_NOT, LOGICAL_NOT, DOT, COMMA))
+            singleCharTokenMap.put(type.regex, type);
     }
 
     static
@@ -96,7 +58,7 @@ public class TokenStream
         }
     }
 
-    public LinkedList<Token> tokens;
+    public final LinkedList<Token> tokens;
 
     public TokenStream(String input)
     {
