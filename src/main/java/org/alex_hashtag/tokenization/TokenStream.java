@@ -71,6 +71,7 @@ public class TokenStream
         int row = 0;
         int column = 0;
 
+        loop:
         while (index < input.length())
         {
             char currentChar = input.charAt(index);
@@ -203,8 +204,10 @@ public class TokenStream
                     {
                         if (c == '\n')
                         {
+                            tokens.add(Token.stored(startRow, startColumn, INVALID, input.substring(startIndex, index)));
                             row++;
                             column = 0;
+                            continue loop;
                         }
                         else
                         {

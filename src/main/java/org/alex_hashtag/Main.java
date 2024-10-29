@@ -8,16 +8,10 @@ public class Main
     public static void main(String[] args)
     {
         new TokenStream("""
-                template <type T, type U>
-                typedef PairList = ArrayList<tuple<T, U>>
-                {
-                	public static PairList new() return ArrayList<T, U>.new();
-                }
+                \"
+                \"jfirnr\"
                 
-                void main()
-                {
-                    PairList<String, int> pairs = PairList<String, int>.new();
-                }
+                \"
                 """).printTokens();
     }
 }
