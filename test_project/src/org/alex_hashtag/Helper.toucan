@@ -1,0 +1,20 @@
+package org.alex_hashtag;
+
+public namespace Math
+{
+    public const float64 PI = 3.14159;
+    public const float64 square(float64 num) return num * num;
+}
+
+public class Rectangle
+{
+    private float64 a;
+    private float64 b;
+    public constructor new(float64 a, float64 b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    public float64 area() return this.a * this.b;
+}
