@@ -13,10 +13,12 @@ import java.util.Map;
 
 public class Main
 {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
         Path source = Paths.get("test_project/rainforest.toml");
         TomlParseResult result = Toml.parse(source);
         result.errors().forEach(System.err::println);
+
 
     }
 }

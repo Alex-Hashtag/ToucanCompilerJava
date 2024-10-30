@@ -1,23 +1,21 @@
 # Rainforest build configoration
 
-compiler_version = "1.0.0"
-
-project_root = "test_project"
-main_file = "src/org/alex_hashtag/Main.toucan"
+[project]
+compiler = "1.0.0"
+root = "test_project"
+main = "src/org/alex_hashtag/Main.toucan"
 
 # Detailed Metadata
 [metadata]
-project_name = "Toucan Test Project"
+name = "Toucan Test Project"
 description = "A project to test the compilation of Toucan projects"
 
 # Author Details
-[metadata.author]
-name = "Alexander"
+author = "Alexander"
 email = "alex_hashtag@toucan.wiki"
 website = "https://toucan.wiki"
 
 # Version Control
-[metadata.version_control]
 version = "1.0.0"
 repository = "https://github.com/Alex-Hashtag/ToucanCompilerJava"
 
@@ -27,16 +25,13 @@ repository = "https://github.com/Alex-Hashtag/ToucanCompilerJava"
 optimization = "-O3"
 
 # Output Settings
-[build.output]
-executable = "build/output/my_project_executable"
+executable = "build/output"
 logs = "build/logs"
-intermediate_files = "build/intermediate"
+intermediates = "build/intermediate"
 
 # Target Platform
-[build.target]
 os = "linux"
 architecture = "x86_64"
 
 # Additional Build Options
-[build.options]
 debug_symbols = false
