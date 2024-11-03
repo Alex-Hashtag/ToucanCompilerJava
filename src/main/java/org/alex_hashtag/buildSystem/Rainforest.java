@@ -1,8 +1,7 @@
 package org.alex_hashtag.buildSystem;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
 import jakarta.mail.internet.InternetAddress;
-import org.tomlj.Toml;
-import org.tomlj.TomlParseResult;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,14 +10,17 @@ import java.net.URL;
 
 public class Rainforest
 {
-    Project project;
-    Metadata metadata;
-    Build build;
+    public Project project;
+    public Metadata metadata;
+    public Build build;
 
     public Rainforest(Path path) throws IOException
     {
-        TomlParseResult result = Toml.parse(path);
-        result.errors().forEach(System.err::println);
+        FileConfig config = FileConfig.of(path);
+
+
+
+        config.close();
     }
 }
 
