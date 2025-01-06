@@ -2,21 +2,20 @@ package org.alex_hashtag.tokenization;
 
 public enum TokenType
 {
-
     SEMI_COLON(";"),
     COLON(":"),
     DOT("."),
     COMMA(","),
 
     //Braces
-    BRACE_OPEN("\\("),
-    BRACE_CLOSED("\\)"),
+    BRACE_OPEN("("),
+    BRACE_CLOSED(")"),
     BRACKET_OPEN("\\["),
     BRACKET_CLOSED("\\]"),
     CURLY_OPEN("\\{"),
     CURLY_CLOSED("\\}"),
-    ARROW_OPEN("<"), //! Handle this
-    ARROW_CLOSED(">"), //! Handle this
+    ARROW_OPEN("<"),
+    ARROW_CLOSED(">"),
 
     //Operators
     ASSIGNMENT("="),
@@ -41,7 +40,7 @@ public enum TokenType
     BIT_SHIFT_LEFT("<<"),
     BIT_SHIFT_RIGHT(">>"),
     BIT_SHIFT_RIGHT_UNSIGNED(">>>"),
-    BITWISE_AND("&"), //! Also address
+    BITWISE_AND("&"),
     BITWISE_OR("\\|"),
     BITWISE_XOR("\\^"),
     BITWISE_NOT("~"),
@@ -50,15 +49,15 @@ public enum TokenType
     BIT_SHIFT_LEFT_EQUALS("<<="),
     BIT_SHIFT_RIGHT_EQUALS(">>="),
     BIT_SHIFT_RIGHT_UNSIGNED_EQUALS(">>>="),
-    ADDITION_ASSIGN("+="),
+    ADDITION_ASSIGN("\\+="),
     SUBTRACTION_ASSIGN("-="),
-    MULTIPLICATION_ASSIGN("*="),
+    MULTIPLICATION_ASSIGN("\\*="),
     DIVISION_ASSIGN("/="),
     MODULO_ASSIGN("%="),
     BITWISE_AND_ASSIGN("&="),
-    BITWISE_OR_ASSIGN("|="),
-    BITWISE_XOR_ASSIGN("^="),
-    INCREMENT("++"),
+    BITWISE_OR_ASSIGN("\\|="),
+    BITWISE_XOR_ASSIGN("\\^="),
+    INCREMENT("\\+\\+"),
     DECREMENT("--"),
     DOUBLE_COLON("::"),
 
@@ -148,8 +147,15 @@ public enum TokenType
     NAMESPACE("namespace"),
 
     //Macros
-    MACRO("macro"),
+    MACRO("macro"),       // existing macro keyword
     ANNOTATION("annotation"),
+
+    // *** NEW TOKENS FOR ANNOTATION & MACROS ***
+    ANNOTATION_USE(""),   // logic-driven, not purely regex-based
+    MACRO_USE(""),        // logic-driven
+    MACRO_VARIABLE("^\\$[A-Za-z_]\\w*"), // e.g. $foo
+    MACRO_EXPR("expression"),
+    MACRO_IDENT("identifier"),
 
     //Others
     ARROW("->"),
@@ -183,7 +189,9 @@ public enum TokenType
         return switch (this)
         {
             case IDENTIFIER, INT_LITERAL, FLOAT_LITERAL,
-                 CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL -> true;
+                 CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL,
+                 MACRO_VARIABLE, ANNOTATION_USE, MACRO_USE ->
+                    true;
             default -> false;
         };
     }

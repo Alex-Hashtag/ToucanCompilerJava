@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-
 public class Token
 {
     public Coordinates coordinates;
@@ -45,15 +44,15 @@ public class Token
         return new Token(new Coordinates(row, column), type, internal);
     }
 
-
     public static Token from(String sequence, int row, int column)
     {
         for (TokenType type : TokenType.values())
-            if (sequence.matches(type.regex))
+            if (!type.regex.isEmpty() && sequence.matches(type.regex))
             {
                 if (type.isStored())
                     return new Token(new Coordinates(row, column), type, sequence);
-                else return new Token(new Coordinates(row, column), type);
+                else
+                    return new Token(new Coordinates(row, column), type);
             }
 
         return new Token(new Coordinates(row, column), INVALID, sequence);

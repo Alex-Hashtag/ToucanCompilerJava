@@ -6,31 +6,61 @@ import java.util.regex.Pattern;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-
 public class TokenStream
 {
+    // Multi-char operator patterns remain the same
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
+
+    // Instead of storing single-character tokens by their "regex" string,
+    // we now store the actual literal character.
     private static final Map<String, TokenType> singleCharTokenMap = new HashMap<>();
+
     private static final Set<String> keywordsSet = new HashSet<>();
     private static final Map<String, TokenType> keywordMap = new HashMap<>();
 
     static
     {
         // Multi-character operators
-        for (TokenType type : List.of(BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS, BIT_SHIFT_LEFT,
-                BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED, EQUALITY, INEQUALITY, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, ADDITION_ASSIGN,
-                SUBTRACTION_ASSIGN, MULTIPLICATION_ASSIGN, DIVISION_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN,
-                BITWISE_XOR_ASSIGN, INCREMENT, DECREMENT, ARROW, DOUBLE_COLON, LOGICAL_AND, LOGICAL_OR))
+        for (TokenType type : List.of(
+                BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS,
+                BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED,
+                EQUALITY, INEQUALITY, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL,
+                ADDITION_ASSIGN, SUBTRACTION_ASSIGN, MULTIPLICATION_ASSIGN,
+                DIVISION_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN,
+                BITWISE_OR_ASSIGN, BITWISE_XOR_ASSIGN, INCREMENT, DECREMENT,
+                ARROW, DOUBLE_COLON, LOGICAL_AND, LOGICAL_OR))
+        {
             multiCharOperatorMap.put(type.regex, type);
+        }
     }
 
     static
     {
-        // Single-character tokens
-        for (TokenType type : List.of(SEMI_COLON, COLON, BRACE_OPEN, BRACE_CLOSED, BRACKET_OPEN, BRACKET_CLOSED, CURLY_OPEN, CURLY_CLOSED,
-                LESS_THAN, GREATER_THAN, ASSIGNMENT, ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, MODULO, BITWISE_AND, BITWISE_OR,
-                BITWISE_XOR, BITWISE_NOT, LOGICAL_NOT, DOT, COMMA))
-            singleCharTokenMap.put(type.regex, type);
+        // SINGLE-CHAR LITERALS:
+        // The string keys here are actual characters we expect in the source code.
+        singleCharTokenMap.put(";", SEMI_COLON);
+        singleCharTokenMap.put(":", COLON);
+        singleCharTokenMap.put(".", DOT);
+        singleCharTokenMap.put(",", COMMA);
+        singleCharTokenMap.put("(", BRACE_OPEN);
+        singleCharTokenMap.put(")", BRACE_CLOSED);
+        singleCharTokenMap.put("[", BRACKET_OPEN);
+        singleCharTokenMap.put("]", BRACKET_CLOSED);
+        singleCharTokenMap.put("{", CURLY_OPEN);
+        singleCharTokenMap.put("}", CURLY_CLOSED);
+        singleCharTokenMap.put("<", ARROW_OPEN);
+        singleCharTokenMap.put(">", ARROW_CLOSED);
+        singleCharTokenMap.put("=", ASSIGNMENT);
+        singleCharTokenMap.put("+", ADDITION);
+        singleCharTokenMap.put("-", SUBTRACTION);
+        singleCharTokenMap.put("*", MULTIPLICATION);
+        singleCharTokenMap.put("/", DIVISION);
+        singleCharTokenMap.put("%", MODULO);
+        singleCharTokenMap.put("&", BITWISE_AND);
+        singleCharTokenMap.put("|", BITWISE_OR);
+        singleCharTokenMap.put("^", BITWISE_XOR);
+        singleCharTokenMap.put("~", BITWISE_NOT);
+        singleCharTokenMap.put("!", LOGICAL_NOT);
     }
 
     static
@@ -41,15 +71,15 @@ public class TokenStream
                 "uint8", "uint16", "uint32", "uint64", "uint128",
                 "float16", "float32", "float64", "float80", "float128",
                 "bool", "char", "rune", "string", "type", "var", "lambda",
-                "mutable", "const", "static",
-                "this", "constructor", "if", "else", "class", "namespace",
-                "while", "do", "for", "loop", "switch", "null", "continue",
-                "template", "yield", "struct", "implement", "implements",
-                "public", "private", "protected", "implicit", "extends",
-                "super", "abstract", "trait", "enum", "error",
-                "sys", "typeof", "unsafe", "sizeof", "typedef", "operations",
-                "import", "package", "true", "false", "return", "echo",
-                "inline", "break", "macro", "annotation"
+                "mutable", "const", "static", "this", "constructor",
+                "if", "else", "class", "namespace", "while", "do", "for",
+                "loop", "switch", "null", "continue", "template",
+                "yield", "struct", "implement", "implements", "public",
+                "private", "protected", "implicit", "extends", "super",
+                "abstract", "trait", "enum", "error", "sys", "typeof",
+                "unsafe", "sizeof", "typedef", "operations", "import",
+                "package", "true", "false", "return", "echo", "inline",
+                "break", "macro", "annotation"
         };
         for (String kw : keywords)
         {
@@ -63,9 +93,7 @@ public class TokenStream
     public TokenStream(String input)
     {
         this.tokens = new LinkedList<>();
-
-        //* Puts a START token to signify the chain start
-        tokens.add(Token.getStart());
+        tokens.add(Token.getStart()); // START token
 
         int index = 0;
         int row = 0;
@@ -94,7 +122,7 @@ public class TokenStream
             // Handle comments
             if (input.startsWith("//", index))
             {
-                // Single-line comment
+                // Single-line
                 int startColumn = column;
                 int startIndex = index;
                 index += 2;
@@ -110,7 +138,7 @@ public class TokenStream
             }
             if (input.startsWith("/*", index))
             {
-                // Multi-line comment
+                // Multi-line
                 int startRow = row;
                 int startColumn = column;
                 int startIndex = index;
@@ -143,7 +171,7 @@ public class TokenStream
                 continue;
             }
 
-            // Handle multiline strings
+            // Handle multi-line strings (""" ... """)
             if (input.startsWith("\"\"\"", index))
             {
                 int startRow = row;
@@ -178,8 +206,8 @@ public class TokenStream
                 continue;
             }
 
-            // Handle strings
-            if (input.charAt(index) == '"')
+            // Handle regular strings
+            if (currentChar == '"')
             {
                 int startRow = row;
                 int startColumn = column;
@@ -188,9 +216,11 @@ public class TokenStream
                 column++;
                 while (index < input.length())
                 {
+                    if (index >= input.length()) break;
                     char c = input.charAt(index);
                     if (c == '\\')
                     {
+                        // Skip escaped char
                         index += 2;
                         column += 2;
                     }
@@ -204,7 +234,9 @@ public class TokenStream
                     {
                         if (c == '\n')
                         {
-                            tokens.add(Token.stored(startRow, startColumn, INVALID, input.substring(startIndex, index)));
+                            // Unclosed string
+                            tokens.add(Token.stored(startRow, startColumn, INVALID,
+                                    input.substring(startIndex, index)));
                             row++;
                             column = 0;
                             continue loop;
@@ -222,7 +254,7 @@ public class TokenStream
             }
 
             // Handle character literals
-            if (input.charAt(index) == '\'')
+            if (currentChar == '\'')
             {
                 int startRow = row;
                 int startColumn = column;
@@ -231,6 +263,7 @@ public class TokenStream
                 column++;
                 while (index < input.length())
                 {
+                    if (index >= input.length()) break;
                     char c = input.charAt(index);
                     if (c == '\\')
                     {
@@ -262,7 +295,108 @@ public class TokenStream
                 continue;
             }
 
-            // Handle multi-character operators
+            // --- Simplified: Handle annotation usage: @Getter
+            //     We do NOT parse any parentheses. We just store @ + annotationName.
+            if (currentChar == '@')
+            {
+                int startRow = row;
+                int startColumn = column;
+                index++;
+                column++;
+
+                StringBuilder annotationName = new StringBuilder();
+                while (index < input.length())
+                {
+                    char nc = input.charAt(index);
+                    // Stop if non-alphanumeric and not underscore
+                    if (!Character.isLetterOrDigit(nc) && nc != '_')
+                    {
+                        break;
+                    }
+                    annotationName.append(nc);
+                    index++;
+                    column++;
+                }
+
+                String combined = "@" + annotationName;
+                tokens.add(Token.stored(startRow, startColumn, ANNOTATION_USE, combined));
+                continue;
+            }
+
+            // --- Handle macro usage: e.g. sum!(...) ---
+            {
+                int lookAheadIndex = index;
+                Matcher macroCheck = Pattern.compile(IDENTIFIER.regex).matcher(input.substring(lookAheadIndex));
+                if (macroCheck.lookingAt())
+                {
+                    String possibleMacroName = macroCheck.group();
+                    int nameLen = possibleMacroName.length();
+                    // Check if next char is '!'
+                    if (lookAheadIndex + nameLen < input.length() &&
+                            input.charAt(lookAheadIndex + nameLen) == '!')
+                    {
+                        // Then check if after '!' there's '(', '[', or '{'
+                        char nextSym = (lookAheadIndex + nameLen + 1 < input.length())
+                                ? input.charAt(lookAheadIndex + nameLen + 1) : '\0';
+
+                        if (nextSym == '(' || nextSym == '[' || nextSym == '{')
+                        {
+                            // We found a macro usage
+                            int startRow = row;
+                            int startColumn = column;
+
+                            // Move the real index forward by nameLen + 1 (for '!')
+                            index += nameLen + 1;
+                            column += nameLen + 1;
+
+                            // Build the macro content
+                            StringBuilder macroContent = new StringBuilder(possibleMacroName + "!");
+                            // Parse the bracketed content with nesting
+                            Deque<Character> stack = new ArrayDeque<>();
+                            stack.push(nextSym);
+                            macroContent.append(nextSym);
+                            index++;
+                            column++;
+
+                            while (!stack.isEmpty() && index < input.length())
+                            {
+                                char c = input.charAt(index);
+                                macroContent.append(c);
+                                index++;
+                                column++;
+
+                                if (c == '(' || c == '[' || c == '{')
+                                {
+                                    stack.push(c);
+                                }
+                                else if (c == ')' || c == ']' || c == '}')
+                                {
+                                    if (!stack.isEmpty())
+                                    {
+                                        char open = stack.peek();
+                                        if ((open == '(' && c == ')') ||
+                                                (open == '[' && c == ']') ||
+                                                (open == '{' && c == '}'))
+                                        {
+                                            stack.pop();
+                                        }
+                                        else
+                                        {
+                                            // Mismatched bracket - treat as error or keep going
+                                            stack.pop();
+                                        }
+                                    }
+                                }
+                            }
+                            // We have the entire macro usage
+                            tokens.add(Token.stored(startRow, startColumn, MACRO_USE, macroContent.toString()));
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            // Handle multi-character operators (like '<<', '>>', '&&', '||', etc.)
             boolean matchedOperator = false;
             for (Map.Entry<String, TokenType> entry : multiCharOperatorMap.entrySet())
             {
@@ -279,9 +413,25 @@ public class TokenStream
             }
             if (matchedOperator) continue;
 
-            // Handle number literals
+            // Check for macro variables: starts with '$'
+            if (currentChar == '$')
+            {
+                Matcher macroVarMatcher = Pattern.compile(MACRO_VARIABLE.regex)
+                        .matcher(input.substring(index));
+                if (macroVarMatcher.lookingAt())
+                {
+                    String macroVar = macroVarMatcher.group();
+                    int startColumn = column;
+                    tokens.add(Token.stored(row, startColumn, MACRO_VARIABLE, macroVar));
+                    index += macroVar.length();
+                    column += macroVar.length();
+                    continue;
+                }
+            }
+
             // Try to match float literal
-            Matcher floatMatcher = Pattern.compile(FLOAT_LITERAL.regex).matcher(input.substring(index));
+            Matcher floatMatcher = Pattern.compile(FLOAT_LITERAL.regex)
+                    .matcher(input.substring(index));
             if (floatMatcher.lookingAt())
             {
                 int startColumn = column;
@@ -293,7 +443,8 @@ public class TokenStream
             }
 
             // Try to match int literal
-            Matcher intMatcher = Pattern.compile(INT_LITERAL.regex).matcher(input.substring(index));
+            Matcher intMatcher = Pattern.compile(INT_LITERAL.regex)
+                    .matcher(input.substring(index));
             if (intMatcher.lookingAt())
             {
                 int startColumn = column;
@@ -304,28 +455,39 @@ public class TokenStream
                 continue;
             }
 
-            // Handle identifiers and keywords
-            Matcher idMatcher = Pattern.compile(IDENTIFIER.regex).matcher(input.substring(index));
+            // Handle identifiers and keywords (incl. macro keywords expression/identifier)
+            Matcher idMatcher = Pattern.compile(IDENTIFIER.regex)
+                    .matcher(input.substring(index));
             if (idMatcher.lookingAt())
             {
                 String word = idMatcher.group();
                 int startColumn = column;
-                if (keywordsSet.contains(word))
+
+                // Check for special macro keywords
+                if (word.equals("expression"))
                 {
-                    // It's a keyword
+                    tokens.add(Token.basic(row, startColumn, MACRO_EXPR));
+                }
+                else if (word.equals("identifier"))
+                {
+                    tokens.add(Token.basic(row, startColumn, MACRO_IDENT));
+                }
+                else if (keywordsSet.contains(word))
+                {
                     tokens.add(Token.basic(row, startColumn, keywordMap.get(word)));
                 }
                 else
                 {
-                    // It's an identifier
+                    // It's a normal identifier
                     tokens.add(Token.stored(row, startColumn, IDENTIFIER, word));
                 }
+
                 index += word.length();
                 column += word.length();
                 continue;
             }
 
-            // Handle single-character operators and punctuations
+            // Handle single-character operators/punctuations
             String ch = String.valueOf(input.charAt(index));
             if (singleCharTokenMap.containsKey(ch))
             {
@@ -336,15 +498,14 @@ public class TokenStream
                 continue;
             }
 
-            // If none matched, create INVALID token
+            // If none matched, it's invalid
             int startColumn = column;
             tokens.add(Token.stored(row, startColumn, INVALID, String.valueOf(input.charAt(index))));
             index++;
             column++;
         }
 
-        //* Puts an END token to signify the chain end
-        tokens.add(Token.getEnd());
+        tokens.add(Token.getEnd()); // END token
     }
 
     public void printTokens()
