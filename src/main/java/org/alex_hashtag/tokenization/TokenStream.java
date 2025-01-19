@@ -429,11 +429,9 @@ public class TokenStream
                 }
             }
 
-            // Try to match float literal
-            Matcher floatMatcher = Pattern.compile(FLOAT_LITERAL.regex)
-                    .matcher(input.substring(index));
-            if (floatMatcher.lookingAt())
-            {
+            // Match float literal first
+            Matcher floatMatcher = Pattern.compile(FLOAT_LITERAL.regex).matcher(input.substring(index));
+            if (floatMatcher.lookingAt()) {
                 int startColumn = column;
                 String floatLiteral = floatMatcher.group();
                 tokens.add(Token.stored(row, startColumn, FLOAT_LITERAL, floatLiteral));
@@ -442,11 +440,9 @@ public class TokenStream
                 continue;
             }
 
-            // Try to match int literal
-            Matcher intMatcher = Pattern.compile(INT_LITERAL.regex)
-                    .matcher(input.substring(index));
-            if (intMatcher.lookingAt())
-            {
+// Match int literal after
+            Matcher intMatcher = Pattern.compile(INT_LITERAL.regex).matcher(input.substring(index));
+            if (intMatcher.lookingAt()) {
                 int startColumn = column;
                 String intLiteral = intMatcher.group();
                 tokens.add(Token.stored(row, startColumn, INT_LITERAL, intLiteral));

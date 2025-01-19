@@ -165,8 +165,8 @@ public enum TokenType
     //Literals
     TRUE("true"),
     FALSE("false"),
-    INT_LITERAL("^-?(?:0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[1-9][0-9_]*|0)"),
-    FLOAT_LITERAL("^(\\d[\\d_]*)(?:\\.\\d[\\d_]*)?(?:[eE][+-]?\\d[\\d_]*)?"),
+    INT_LITERAL("^(?:0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[1-9][0-9_]*|0)"),
+    FLOAT_LITERAL("^(\\d[\\d_]*\\.\\d[\\d_]*([eE][+-]?\\d[\\d_]*)?|\\d[\\d_]+([eE][+-]?\\d[\\d_]*)?)"),
     CHAR_LITERAL("^'(\\\\.|[^\\\\'])'"),
     RUNE_LITERAL("^'(\\\\u[0-9A-Fa-f]{4}|\\\\U[0-9A-Fa-f]{8}|[^\\\\'])'"),
     STRING_LITERAL("^\"(?:\\\\.|[^\"\\\\])*\""),

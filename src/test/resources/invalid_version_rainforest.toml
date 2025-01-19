@@ -1,6 +1,6 @@
 # Rainforest build configoration
 [project]
-compiler = "1.0.0"
+compiler = "invalid_version"
 root = "test_project"
 main = "src/org/alex_hashtag/Main.toucan"
 
