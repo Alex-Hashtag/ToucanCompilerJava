@@ -10,7 +10,7 @@ public class TypeRegistry
 
     public static boolean registerType(Type type)
     {
-        return registeredTypes.add(type);
+        return registeredTypes.add(type) && registeredTypes.add(type.getArray()) && registeredTypes.add(type.getReferencedArray()) && registeredTypes.add(type.getReferenced());
     }
 
     public static Optional<Type> searchByName(final String name)

@@ -5,6 +5,9 @@ import java.util.List;
 public interface Type
 {
     String getName();
+    Type getReferenced();
+    Type getArray();
+    Type getReferencedArray();
 
     List<TraitType> getTraits();
 
