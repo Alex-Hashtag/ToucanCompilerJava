@@ -2,14 +2,17 @@ package org.alex_hashtag.internal_representation.expression;
 
 import org.alex_hashtag.internal_representation.types.Type;
 
+import java.util.Optional;
+
+
 public class UnitExpression implements Expression
 {
-    Type type;
-    String literal;
+    String type;
+    String identifier;
 
     @Override
-    public Type getType()
+    public Optional<Type> getType()
     {
-        return type;
+        return Optional.empty();
     }
 }

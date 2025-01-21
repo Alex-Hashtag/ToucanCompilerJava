@@ -2,17 +2,22 @@ package org.alex_hashtag.internal_representation.expression;
 
 import org.alex_hashtag.internal_representation.expression.operators.BitwiseOperator;
 import org.alex_hashtag.internal_representation.types.Type;
+import org.alex_hashtag.internal_representation.types.TypeRegistry;
+
+import java.util.Optional;
+
 
 public class BitwiseExpression implements Expression
 {
-    Type type;
+    String type;
     Expression left;
     Expression right;
     BitwiseOperator operator;
 
     @Override
-    public Type getType()
+    public Optional<Type> getType()
     {
-        return null;
+        return TypeRegistry.searchByName(type);
     }
 }
+

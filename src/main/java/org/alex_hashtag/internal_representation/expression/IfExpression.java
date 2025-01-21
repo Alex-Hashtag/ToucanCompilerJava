@@ -1,18 +1,21 @@
 package org.alex_hashtag.internal_representation.expression;
 
 import org.alex_hashtag.internal_representation.types.Type;
+import org.alex_hashtag.internal_representation.types.TypeRegistry;
 
 import java.util.List;
+import java.util.Optional;
+
 
 public class IfExpression implements Expression
 {
-    Type type;
+    String type;
     BooleanExpression condition;
     List<Expression> statements;
 
     @Override
-    public Type getType()
+    public Optional<Type> getType()
     {
-        return type;
+        return TypeRegistry.searchByName(type);
     }
 }
