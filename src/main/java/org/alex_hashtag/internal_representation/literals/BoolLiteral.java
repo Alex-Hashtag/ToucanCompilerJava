@@ -1,17 +1,17 @@
-package org.alex_hashtag.internal_representation.expression;
+package org.alex_hashtag.internal_representation.literals;
 
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
 
 import java.util.Optional;
 
-
-public class TypeOfExpression implements Expression
+public class BoolLiteral implements Literal
 {
-    Expression expr;
+    boolean value;
+
     @Override
     public Optional<Type> getType()
     {
-        return TypeRegistry.searchByName("type");
+        return TypeRegistry.searchByName("bool");
     }
 }
