@@ -1,4 +1,4 @@
-package org.alex_hashtag.internal_representation.annotations;
+package org.alex_hashtag.internal_representation.macros;
 
 import java.util.List;
 import java.util.Map;

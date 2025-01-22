@@ -1,6 +1,6 @@
 package org.alex_hashtag.internal_representation.function;
 
-import org.alex_hashtag.internal_representation.annotations.Annotatable;
+import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.expression.Expression;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.types.Generic;
@@ -29,7 +29,10 @@ public class Function implements Generic, Annotatable
     {
         return Map.of("inline", List.of("true", "false"),
                 "visibility", List.of("public", "private", "protected"),
-                "mutability", List.of("mutable", "immutable", "const", "static"));
+                "mutability", List.of("mutable", "immutable", "const", "static", "abstract"),
+                "constructor", List.of("true", "false"),
+                "overrides", List.of("true", "false"),
+                "unsafe", List.of("true", "false"));
     }
 
     @Override

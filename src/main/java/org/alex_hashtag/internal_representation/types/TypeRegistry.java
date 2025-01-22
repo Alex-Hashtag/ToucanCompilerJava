@@ -43,6 +43,7 @@ public class TypeRegistry
         registerType(new PrimativeType("string"));
         registerType(new PrimativeType("void"));
         registerType(new PrimativeType("type"));
+        registerType(new LambdaType(LambdaType.st_name));
     }
 }
 

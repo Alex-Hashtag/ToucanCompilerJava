@@ -1,27 +1,25 @@
-package org.alex_hashtag.internal_representation.literals;
+package org.alex_hashtag.internal_representation.macros;
 
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.Expression;
 import org.alex_hashtag.internal_representation.types.Type;
-import org.alex_hashtag.internal_representation.types.TypeRegistry;
 import org.alex_hashtag.tokenization.Coordinates;
 
-import java.util.List;
 import java.util.Optional;
 
-
-public class ArrayLiteral implements Literal
+/**
+ * Expression to be used in on the right side of each arm of the Macro in order to later be replaced by the proper type
+ * */
+@Getter
+public class MacroExpression implements Expression
 {
 
     @Getter
     Coordinates location;
-    String type;
-    long size;
-    List<Expression> entries;
-
+    String name;
     @Override
     public Optional<Type> getType()
     {
-        return TypeRegistry.searchByName(type);
+        return Optional.empty();
     }
 }
