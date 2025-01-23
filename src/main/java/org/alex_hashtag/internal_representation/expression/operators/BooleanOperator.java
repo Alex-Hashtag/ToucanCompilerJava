@@ -10,8 +10,7 @@ public enum BooleanOperator
     GREATER_EQUAL(">="),
     LESS_EQUAL("<="),
     EQUAL_TO("=="),
-    NOT_EQUAL_TO("!=")
-    ;
+    NOT_EQUAL_TO("!=");
 
     private final String operator;
 

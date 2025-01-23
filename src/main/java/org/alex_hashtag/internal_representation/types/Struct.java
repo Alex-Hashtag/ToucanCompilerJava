@@ -3,11 +3,9 @@ package org.alex_hashtag.internal_representation.types;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.macros.Annotation;
-import org.alex_hashtag.internal_representation.macros.Macro;
 import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.*;
@@ -15,7 +13,7 @@ import java.util.*;
 
 public class Struct implements Type, Annotatable
 {
-
+    Set<Annotation> annotations = new HashSet<>();
     @Getter
     Coordinates location;
     Map<String, String> properties = new HashMap<>();
@@ -66,15 +64,22 @@ public class Struct implements Type, Annotatable
     }
 
     @Override
-    public Map<String, String> properties()
+    public Map<String, String> getProperties()
     {
         return properties;
     }
 
     @Override
-    public Map<String, List<String>> defaults()
+    public Map<String, List<String>> getDefaults()
     {
         return Map.of("visibility", List.of("public", "private"));
+    }
+
+
+    @Override
+    public Optional<Set<Annotation>> getAnnotations()
+    {
+        return annotations.isEmpty() ? Optional.empty() : Optional.of(annotations);
     }
 
     @Override

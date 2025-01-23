@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
+import org.alex_hashtag.internal_representation.macros.Annotation;
 import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.*;
@@ -13,10 +14,12 @@ import java.util.*;
 
 public class Typedef implements Type, Generic, Annotatable
 {
+    Set<Annotation> annotations = new HashSet<>();
     @Getter
     Coordinates location;
     Map<String, String> properties = new HashMap<>();
     List<VariableDeclarationExpression> genericArguments = new ArrayList<>();
+    @Getter
     @Setter
     String name;
     List<String> traits;
@@ -25,26 +28,28 @@ public class Typedef implements Type, Generic, Annotatable
     List<Function> methods;
 
     @Override
-    public Map<String, String> properties()
+    public Map<String, String> getProperties()
     {
         return properties;
     }
 
     @Override
-    public Map<String, List<String>> defaults()
+    public Map<String, List<String>> getDefaults()
     {
         return Map.of("visibility", List.of("public", "private"));
     }
 
+
     @Override
-    public Optional<List<VariableDeclarationExpression>> genericArguments()
+    public Optional<Set<Annotation>> getAnnotations()
     {
-        return genericArguments.isEmpty() ? Optional.empty() : Optional.of(genericArguments);
+        return annotations.isEmpty() ? Optional.empty() : Optional.of(annotations);
     }
 
-    public String getName()
+    @Override
+    public Optional<List<VariableDeclarationExpression>> getGenericArguments()
     {
-        return this.name;
+        return genericArguments.isEmpty() ? Optional.empty() : Optional.of(genericArguments);
     }
 
     @SneakyThrows

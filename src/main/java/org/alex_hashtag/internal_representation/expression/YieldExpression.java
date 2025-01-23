@@ -13,6 +13,7 @@ public class YieldExpression implements Expression
     @Getter
     Coordinates location;
     Expression yieldThis;
+
     @Override
     public Optional<Type> getType()
     {

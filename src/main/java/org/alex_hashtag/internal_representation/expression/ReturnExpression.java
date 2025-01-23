@@ -13,6 +13,7 @@ public class ReturnExpression implements Expression
     @Getter
     Coordinates location;
     Expression returnThis;
+
     @Override
     public Optional<Type> getType()
     {

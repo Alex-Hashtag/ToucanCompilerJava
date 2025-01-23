@@ -190,8 +190,7 @@ public enum TokenType
         {
             case IDENTIFIER, INT_LITERAL, FLOAT_LITERAL,
                  CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL,
-                 MACRO_VARIABLE, ANNOTATION_USE, MACRO_USE ->
-                    true;
+                 MACRO_VARIABLE, ANNOTATION_USE, MACRO_USE -> true;
             default -> false;
         };
     }

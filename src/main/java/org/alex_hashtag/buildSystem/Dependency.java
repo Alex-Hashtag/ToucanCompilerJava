@@ -4,7 +4,8 @@ public record Dependency(
         String publisher,
         String project,
         GenericVersion version
-) {
+)
+{
     /**
      * Parses a dependency string in the format "publisher::project::version".
      *
@@ -12,9 +13,11 @@ public record Dependency(
      * @return A Dependency instance.
      * @throws IllegalArgumentException If the format is incorrect or version is invalid.
      */
-    public static Dependency parse(String dependencyStr) {
+    public static Dependency parse(String dependencyStr)
+    {
         String[] parts = dependencyStr.split("::");
-        if (parts.length != 3) {
+        if (parts.length != 3)
+        {
             throw new IllegalArgumentException("Dependency must be in the format 'publisher::project::version'");
         }
 
@@ -26,7 +29,8 @@ public record Dependency(
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return publisher + "::" + project + "::" + version;
     }
 }

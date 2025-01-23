@@ -14,6 +14,7 @@ public class Annotation implements Locatable
 
     @Getter
     Coordinates location;
+    @Getter
     String identifier;
     VariableDeclarationExpression argument;
     List<Function> methods;

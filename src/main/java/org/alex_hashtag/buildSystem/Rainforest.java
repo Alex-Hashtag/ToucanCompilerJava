@@ -1,11 +1,10 @@
 package org.alex_hashtag.buildSystem;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import jakarta.mail.internet.InternetAddress;
 import org.alex_hashtag.errors.TomlErrorManager;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -13,7 +12,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Rainforest {
+
+public class Rainforest
+{
     public Project project;
     public Metadata metadata;
     public Build build;
@@ -24,16 +25,20 @@ public class Rainforest {
      *
      * @param path The path to the rainforest.toml file.
      */
-    public Rainforest(String path) {
+    public Rainforest(String path)
+    {
         TomlErrorManager errorManager = new TomlErrorManager();
 
-        try (FileConfig config = FileConfig.of(path)) {
+        try (FileConfig config = FileConfig.of(path))
+        {
             config.load();
 
             // Parse [project] section
-            if (config.contains("project")) {
+            if (config.contains("project"))
+            {
                 CommentedConfig projectConfig = config.get("project");
-                try {
+                try
+                {
                     String compilerStr = projectConfig.getOrElse("compiler", "0.1.0"); // Default compiler version
                     GenericVersion compilerVersion = GenericVersion.parse(compilerStr);
 
@@ -42,17 +47,22 @@ public class Rainforest {
                     Path mainPath = Paths.get(mainPathStr);
 
                     project = new Project(compilerVersion, root, mainPath);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e)
+                {
                     errorManager.addError("Project Section", e.getMessage());
                 }
-            } else {
+            }
+            else
+            {
                 errorManager.addError("Missing [project] section in TOML configuration.");
             }
 
             // Parse [metadata] section
-            if (config.contains("metadata")) {
+            if (config.contains("metadata"))
+            {
                 CommentedConfig metadataConfig = config.get("metadata");
-                try {
+                try
+                {
                     String name = metadataConfig.getOrElse("name", "Unnamed Project");
                     String description = metadataConfig.getOrElse("description", "");
 
@@ -63,10 +73,13 @@ public class Rainforest {
                     // Emails
                     List<String> emailsList = metadataConfig.getOrElse("emails", new ArrayList<String>());
                     InternetAddress[] emails = new InternetAddress[emailsList.size()];
-                    for (int i = 0; i < emailsList.size(); i++) {
-                        try {
+                    for (int i = 0; i < emailsList.size(); i++)
+                    {
+                        try
+                        {
                             emails[i] = new InternetAddress(emailsList.get(i));
-                        } catch (jakarta.mail.internet.AddressException e) {
+                        } catch (jakarta.mail.internet.AddressException e)
+                        {
                             errorManager.addError("Metadata Section - Email", "Invalid email format: " + emailsList.get(i));
                         }
                     }
@@ -74,10 +87,13 @@ public class Rainforest {
                     // Website
                     String websiteStr = metadataConfig.getOrElse("website", "");
                     URL website = null;
-                    if (!websiteStr.isEmpty()) {
-                        try {
+                    if (!websiteStr.isEmpty())
+                    {
+                        try
+                        {
                             website = new URL(websiteStr);
-                        } catch (MalformedURLException e) {
+                        } catch (MalformedURLException e)
+                        {
                             errorManager.addError("Metadata Section - Website", "Invalid URL: " + websiteStr);
                         }
                     }
@@ -89,10 +105,13 @@ public class Rainforest {
                     // Repository
                     String repositoryStr = metadataConfig.getOrElse("repository", "");
                     URL repository = null;
-                    if (!repositoryStr.isEmpty()) {
-                        try {
+                    if (!repositoryStr.isEmpty())
+                    {
+                        try
+                        {
                             repository = new URL(repositoryStr);
-                        } catch (MalformedURLException e) {
+                        } catch (MalformedURLException e)
+                        {
                             errorManager.addError("Metadata Section - Repository", "Invalid URL: " + repositoryStr);
                         }
                     }
@@ -106,10 +125,13 @@ public class Rainforest {
                             version,
                             repository
                     );
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e)
+                {
                     errorManager.addError("Metadata Section", e.getMessage());
                 }
-            } else {
+            }
+            else
+            {
                 // If metadata section is missing, use default values
                 metadata = new Metadata(
                         "Unnamed Project",
@@ -123,15 +145,19 @@ public class Rainforest {
             }
 
             // Parse [build] section
-            if (config.contains("build")) {
+            if (config.contains("build"))
+            {
                 CommentedConfig buildConfig = config.get("build");
-                try {
+                try
+                {
                     // Optimization
                     String optimizationStr = buildConfig.getOrElse("optimization", "-O0");
                     Optimization optimization;
-                    try {
+                    try
+                    {
                         optimization = Optimization.valueOf(optimizationStr.replace("-", "").toUpperCase());
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e)
+                    {
                         errorManager.addError("Build Section - Optimization", "Invalid optimization level: " + optimizationStr);
                         optimization = Optimization.O0; // Default optimization
                     }
@@ -166,10 +192,13 @@ public class Rainforest {
                             architecture,
                             debugSymbols
                     );
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e)
+                {
                     errorManager.addError("Build Section", e.getMessage());
                 }
-            } else {
+            }
+            else
+            {
                 // If build section is missing, use default values
                 build = new Build(
                         Optimization.O0,
@@ -184,13 +213,17 @@ public class Rainforest {
 
             // Parse dependencies
             dependencies = new ArrayList<>();
-            if (config.contains("project.dependencies")) {
+            if (config.contains("project.dependencies"))
+            {
                 List<String> depsList = config.getOrElse("project.dependencies", new ArrayList<String>());
-                for (String depStr : depsList) {
-                    try {
+                for (String depStr : depsList)
+                {
+                    try
+                    {
                         Dependency dep = Dependency.parse(depStr);
                         dependencies.add(dep);
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e)
+                    {
                         errorManager.addError("Dependencies Section", "Invalid dependency format: " + depStr);
                     }
                 }
@@ -198,13 +231,14 @@ public class Rainforest {
             // If dependencies are missing, leave the list empty as per requirements.
 
             // After parsing, check for any errors
-            if(errorManager.hasErrors())
+            if (errorManager.hasErrors())
             {
                 errorManager.printErrors();
                 System.exit(1);
             }
 
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException e)
+        {
             // Re-throwing after errorManager handled the errors
             throw e;
         }

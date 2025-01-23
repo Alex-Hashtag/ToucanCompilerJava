@@ -4,23 +4,13 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+
 public class TypeRegistry
 {
     static Set<Type> registeredTypes = new HashSet<>();
 
-    public static boolean registerType(Type type)
+    static
     {
-        return registeredTypes.add(type) && registeredTypes.add(type.getArray()) && registeredTypes.add(type.getReferencedArray()) && registeredTypes.add(type.getReferenced());
-    }
-
-    public static Optional<Type> searchByName(final String name)
-    {
-        return registeredTypes.stream()
-                .filter(t -> t.getName().equals(name))
-                .findFirst();
-    }
-
-    static {
         registerType(new PrimativeType("int8"));
         registerType(new PrimativeType("int16"));
         registerType(new PrimativeType("int32"));
@@ -44,6 +34,18 @@ public class TypeRegistry
         registerType(new PrimativeType("void"));
         registerType(new PrimativeType("type"));
         registerType(new LambdaType(LambdaType.st_name));
+    }
+
+    public static boolean registerType(Type type)
+    {
+        return registeredTypes.add(type) && registeredTypes.add(type.getArray()) && registeredTypes.add(type.getReferencedArray()) && registeredTypes.add(type.getReferenced());
+    }
+
+    public static Optional<Type> searchByName(final String name)
+    {
+        return registeredTypes.stream()
+                .filter(t -> t.getName().equals(name))
+                .findFirst();
     }
 }
 

@@ -7,6 +7,7 @@ import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.Optional;
 
+
 public class RuneLiteral implements Literal
 {
     @Getter

@@ -2,6 +2,7 @@ package org.alex_hashtag.internal_representation.types;
 
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
+import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class TraitType implements Type, Generic
     String name;
     List<String> traits;
     List<VariableDeclarationExpression> genericArguments;
+    List<Function> methodsToImpl;
 
     @Override
     public String getName()
@@ -47,7 +49,7 @@ public class TraitType implements Type, Generic
     }
 
     @Override
-    public Optional<List<VariableDeclarationExpression>> genericArguments()
+    public Optional<List<VariableDeclarationExpression>> getGenericArguments()
     {
         return genericArguments.isEmpty() ? Optional.empty() : Optional.of(genericArguments);
     }

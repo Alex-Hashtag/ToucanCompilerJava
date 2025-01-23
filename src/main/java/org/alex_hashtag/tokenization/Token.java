@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
+
 public class Token
 {
     public Coordinates coordinates;

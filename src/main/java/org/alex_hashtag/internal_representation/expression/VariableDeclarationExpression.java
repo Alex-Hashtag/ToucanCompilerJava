@@ -17,16 +17,16 @@ public class VariableDeclarationExpression implements Expression
     String type;
     String identifier;
 
-    @Override
-    public Optional<Type> getType()
-    {
-        return TypeRegistry.searchByName("void");
-    }
-
     public VariableDeclarationExpression(String identifier, Mutability mutability, String type)
     {
         this.identifier = identifier;
         this.mutability = mutability;
         this.type = type;
+    }
+
+    @Override
+    public Optional<Type> getType()
+    {
+        return TypeRegistry.searchByName("void");
     }
 }

@@ -3,7 +3,9 @@ package org.alex_hashtag.errors;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TomlErrorManager {
+
+public class TomlErrorManager
+{
     private final List<String> errors = new ArrayList<>();
 
     /**
@@ -11,7 +13,8 @@ public class TomlErrorManager {
      *
      * @param message The error message to add.
      */
-    public void addError(String message) {
+    public void addError(String message)
+    {
         errors.add(message);
     }
 
@@ -21,7 +24,8 @@ public class TomlErrorManager {
      * @param context The context where the error occurred.
      * @param message The error message.
      */
-    public void addError(String context, String message) {
+    public void addError(String context, String message)
+    {
         errors.add(context + ": " + message);
     }
 
@@ -30,16 +34,19 @@ public class TomlErrorManager {
      *
      * @return True if there are errors, false otherwise.
      */
-    public boolean hasErrors() {
+    public boolean hasErrors()
+    {
         return !errors.isEmpty();
     }
 
     /**
      * Prints all recorded errors to the console.
      */
-    public void printErrors() {
+    public void printErrors()
+    {
         System.err.println("Compilation Failed with the following errors:");
-        for (String error : errors) {
+        for (String error : errors)
+        {
             System.err.println("  - " + error);
         }
     }
@@ -49,8 +56,10 @@ public class TomlErrorManager {
      *
      * @throws IllegalStateException If errors are present.
      */
-    public void throwIfErrors() {
-        if (hasErrors()) {
+    public void throwIfErrors()
+    {
+        if (hasErrors())
+        {
             printErrors();
             throw new IllegalStateException("Failed to parse TOML configuration due to errors.");
         }

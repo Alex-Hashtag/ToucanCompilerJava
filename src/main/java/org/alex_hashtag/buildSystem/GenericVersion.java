@@ -8,12 +8,6 @@ public record GenericVersion(int major, int minor, int patch)
             throw new IllegalArgumentException("Version numbers cannot be negative");
     }
 
-    @Override
-    public String toString()
-    {
-        return major + "." + minor + "." + patch;
-    }
-
     public static GenericVersion parse(String version)
     {
         String[] parts = version.split("\\.");
@@ -30,5 +24,11 @@ public record GenericVersion(int major, int minor, int patch)
         {
             throw new IllegalArgumentException("Version components must be integers", e);
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return major + "." + minor + "." + patch;
     }
 }

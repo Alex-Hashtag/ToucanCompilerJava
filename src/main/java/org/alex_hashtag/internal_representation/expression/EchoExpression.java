@@ -13,6 +13,7 @@ public class EchoExpression implements Expression
     @Getter
     Coordinates location;
     Expression expr;
+
     @Override
     public Optional<Type> getType()
     {

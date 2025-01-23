@@ -11,12 +11,13 @@ import java.util.List;
 
 /**
  * Type to be used in on the right side of each arm of the Macro in order to later be replaced by the proper type
- * */
+ */
 public class MacroType implements Type
 {
     @Getter
     Coordinates location;
     String name;
+
     @Override
     public String getName()
     {

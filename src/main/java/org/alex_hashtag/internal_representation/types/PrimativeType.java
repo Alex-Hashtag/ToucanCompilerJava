@@ -5,12 +5,18 @@ import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.List;
 
+
 public class PrimativeType implements Type
 {
     @Getter
     Coordinates location;
     String name;
     List<String> traits;
+
+    public PrimativeType(String name)
+    {
+        this.name = name;
+    }
 
     @Override
     public String getName()
@@ -40,10 +46,5 @@ public class PrimativeType implements Type
     public List<String> getTraits()
     {
         return traits;
-    }
-
-    public PrimativeType(String name)
-    {
-        this.name = name;
     }
 }
