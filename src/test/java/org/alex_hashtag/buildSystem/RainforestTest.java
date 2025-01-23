@@ -1,11 +1,9 @@
 package org.alex_hashtag.buildSystem;
 
 import org.junit.jupiter.api.Test;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 
 import java.nio.file.Path;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 

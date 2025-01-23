@@ -1,0 +1,44 @@
+# Rainforest build configoration
+[project]
+compiler = "1.0.0"
+root = "test_project"
+main = "src/org/alex_hashtag/Main.toucan"
+
+
+# Dependancies for ther project
+# Follow format publishor::project::version
+dependencies  = [
+    "invalid_dependency"
+]
+
+
+# Detailed Metadata
+[metadata]
+name = "Toucan Test Project"
+description = "A project to test the compilation of Toucan projects"
+
+# Author Details
+authors = ["Alexander"]
+emails = ["alex_hashtag@toucan.wiki"]
+website = "https://toucan.wiki"
+
+# Version Control
+version = "1.0.0"
+repository = "https://github.com/Alex-Hashtag/ToucanCompilerJava"
+
+# Build Configuration
+[build]
+# Optimization Levels: -O0, -O1, -O2, -Os, -Oz, -O3, -O4
+optimization = "-O3"
+
+# Output Settings
+executable = "build/output"
+logs = "build/logs"
+intermediates = "build/intermediate"
+
+# Target Platform
+os = "linux"
+architecture = "x86_64"
+
+# Additional Build Options
+debug_symbols = false

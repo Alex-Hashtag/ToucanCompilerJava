@@ -1,0 +1,30 @@
+# Rainforest build configoration
+[project]
+root = "test_project"
+main = "src/org/alex_hashtag/Main.toucan"
+
+
+
+
+# Detailed Metadata
+[metadata]
+
+
+# Version Control
+version = "1.0.0"
+repository = "https://github.com/Alex-Hashtag/ToucanCompilerJava"
+
+# Build Configuration
+[build]
+
+# Output Settings
+executable = "build/output"
+logs = "build/logs"
+intermediates = "build/intermediate"
+
+# Target Platform
+os = "linux"
+architecture = "x86_64"
+
+# Additional Build Options
+debug_symbols = false

@@ -642,4 +642,18 @@ public class TokenStream
             System.out.println(sb);
         }
     }
+
+    public String getTokensAsString()
+    {
+        StringBuilder sb = new StringBuilder();
+        for (Token token : tokens)
+        {
+            sb.append("Type: ").append(token.type);
+            token.internal.ifPresent(content -> sb.append(", Content: ").append(content));
+            sb.append(", Row: ").append(token.coordinates.row());
+            sb.append(", Column: ").append(token.coordinates.column());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
