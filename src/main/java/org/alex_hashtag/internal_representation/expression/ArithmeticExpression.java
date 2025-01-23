@@ -16,7 +16,9 @@ import java.util.Optional;
  * type information for the expression.
  */
 public class ArithmeticExpression implements Expression
+
 {
+    //try me bitch, 28 was here
     @Getter
     Coordinates location;
     String type;
