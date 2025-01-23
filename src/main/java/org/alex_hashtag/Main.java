@@ -74,6 +74,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         public Integer call() {
+            //try me bitch, 28 was here
             try {
                 List<Path> toucanFiles = new ArrayList<>();
                 for (Path path : paths) {
