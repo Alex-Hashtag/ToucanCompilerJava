@@ -1,27 +1,29 @@
 package org.alex_hashtag.tokenization;
 
+import lombok.Getter;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-
+/**
+ * The TokenStream class is responsible for tokenizing input into a sequence of tokens.
+ * It manages various mappings for single-character tokens, multi-character operators, and keywords.
+ * This class is designed to handle the parsing of input strings based on predefined token types.
+ */
 public class TokenStream
 {
-    // Multi-char operator patterns remain the same
+    // Keep your existing static maps, etc.
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
-
-    // Instead of storing single-character tokens by their "regex" string,
-    // we now store the actual literal character.
     private static final Map<String, TokenType> singleCharTokenMap = new HashMap<>();
-
     private static final Set<String> keywordsSet = new HashSet<>();
     private static final Map<String, TokenType> keywordMap = new HashMap<>();
 
     static
     {
-        // Multi-character operators
+        // (Unchanged) multi-char operators
         for (TokenType type : List.of(
                 BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS,
                 BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED,
@@ -37,8 +39,7 @@ public class TokenStream
 
     static
     {
-        // SINGLE-CHAR LITERALS:
-        // The string keys here are actual characters we expect in the source code.
+        // (Unchanged) single-char tokens
         singleCharTokenMap.put(";", SEMI_COLON);
         singleCharTokenMap.put(":", COLON);
         singleCharTokenMap.put(".", DOT);
@@ -66,7 +67,7 @@ public class TokenStream
 
     static
     {
-        // Keywords and types
+        // (Unchanged) keywords
         String[] keywords = {
                 "void", "int8", "int16", "int32", "int64", "int128",
                 "uint8", "uint16", "uint32", "uint64", "uint128",
@@ -89,15 +90,129 @@ public class TokenStream
         }
     }
 
+    // The existing tokens list
     public final LinkedList<Token> tokens;
+    @Getter
+    private final List<ImportDeclaration> imports = new ArrayList<>();
+    // ----------------------------------------------
+    // New fields for the package name & import list:
+    // ----------------------------------------------
+    @Getter
+    private String packageName = null;
 
+    /**
+     * Parses the given input string into a stream of tokens. The method analyzes the input for
+     * various types of lexical elements (e.g., comments, string literals, character literals,
+     * annotations, macros) and stores them as tokens with their corresponding details such as
+     * type and location (row and column).
+     *
+     * @param input The raw input string to be tokenized. This string will be parsed for
+     *              syntactical elements such as whitespace, comments, string literals,
+     *              annotations, macro usages, and more.
+     */
     public TokenStream(String input)
     {
         this.tokens = new LinkedList<>();
         tokens.add(Token.getStart()); // START token
 
+        // Normalize line endings to \n to ensure consistent row counting
+        input = input.replace("\r\n", "\n").replace("\r", "\n");
+
+        // We'll accumulate lines that are *not* package/import in here,
+        // but keep line numbering correct by inserting blank lines for
+        // any line we skip (package/import).
+        StringBuilder nonImportLines = new StringBuilder();
+
+        // Process the input line by line
+        String[] lines = input.split("\n", -1); // The -1 limit ensures trailing empty strings are included
+        for (String line : lines)
+        {
+            String trimmed = line.trim();
+
+            if (trimmed.startsWith("package "))
+            {
+                // Something like: package com.example.coolStuff;
+                String afterPkg = trimmed.substring("package ".length()).trim();
+                // Typically a package line ends with a semicolon in many languages,
+                // if you want to allow that, you can strip it out:
+                if (afterPkg.endsWith(";"))
+                {
+                    afterPkg = afterPkg.substring(0, afterPkg.length() - 1).trim();
+                }
+                this.packageName = afterPkg; // store it
+
+                // Insert a blank line in place so row #s line up
+                nonImportLines.append("\n");
+            }
+            else if (trimmed.startsWith("import "))
+            {
+                // Could be "import something.*;" or "import something;"
+                parseImport(false, trimmed.substring("import ".length()).trim());
+                nonImportLines.append("\n");
+            }
+            else if (trimmed.startsWith("static import "))
+            {
+                // Could be "static import something.member;"
+                parseImport(true, trimmed.substring("static import ".length()).trim());
+                nonImportLines.append("\n");
+            }
+            else
+            {
+                // Not a package/import line. Keep it for normal tokenization.
+                nonImportLines.append(line).append('\n');
+            }
+        }
+
+        // Now tokenize everything else, with line numbering intact.
+        tokenize(nonImportLines.toString());
+    }
+
+    private void parseImport(boolean isStatic, String importLine)
+    {
+        // Typically, lines might end with a semicolon: e.g. import foo.bar.*;
+        if (importLine.endsWith(";"))
+        {
+            importLine = importLine.substring(0, importLine.length() - 1).trim();
+        }
+        // If there's a trailing .*:
+        if (importLine.endsWith(".*"))
+        {
+            String base = importLine.substring(0, importLine.length() - 2).trim();
+            // star import
+            imports.add(new ImportDeclaration(isStatic, base, "*"));
+        }
+        else
+        {
+            // Might be something like "toucan.util.Math.Constants"
+            // or "toucan.util.Math.Constants.PI"
+            // We'll see if there's a final dot segment
+            int lastDot = importLine.lastIndexOf('.');
+            if (lastDot < 0)
+            {
+                // no dot => entire thing is the base
+                imports.add(new ImportDeclaration(isStatic, importLine, null));
+            }
+            else
+            {
+                // We can treat the portion after the last dot as "member" if user wants
+                // In Toucan we can do: static import foo.Bar.BAZ
+                String base = importLine.substring(0, lastDot);
+                String member = importLine.substring(lastDot + 1);
+                // If the 'member' part starts with uppercase and your language always puts
+                // uppercase for classes, etc., you can interpret that differently. For now, let's store it as-is.
+                imports.add(new ImportDeclaration(isStatic, base, member));
+            }
+        }
+    }
+
+    /**
+     * Actually does the tokenization on the leftover lines
+     * (plus blank lines where we skipped package/import).
+     */
+    private void tokenize(String input)
+    {
         int index = 0;
-        int row = 0;
+        int row = 1;
         int column = 0;
 
         loop:
@@ -296,8 +411,7 @@ public class TokenStream
                 continue;
             }
 
-            // --- Simplified: Handle annotation usage: @Getter
-            //     We do NOT parse any parentheses. We just store @ + annotationName.
+            // Handle annotation usage: @Getter
             if (currentChar == '@')
             {
                 int startRow = row;
@@ -333,12 +447,13 @@ public class TokenStream
                     String possibleMacroName = macroCheck.group();
                     int nameLen = possibleMacroName.length();
                     // Check if next char is '!'
-                    if (lookAheadIndex + nameLen < input.length() &&
-                            input.charAt(lookAheadIndex + nameLen) == '!')
+                    if (lookAheadIndex + nameLen < input.length()
+                            && input.charAt(lookAheadIndex + nameLen) == '!')
                     {
                         // Then check if after '!' there's '(', '[', or '{'
                         char nextSym = (lookAheadIndex + nameLen + 1 < input.length())
-                                ? input.charAt(lookAheadIndex + nameLen + 1) : '\0';
+                                ? input.charAt(lookAheadIndex + nameLen + 1)
+                                : '\0';
 
                         if (nextSym == '(' || nextSym == '[' || nextSym == '{')
                         {
@@ -375,9 +490,9 @@ public class TokenStream
                                     if (!stack.isEmpty())
                                     {
                                         char open = stack.peek();
-                                        if ((open == '(' && c == ')') ||
-                                                (open == '[' && c == ']') ||
-                                                (open == '{' && c == '}'))
+                                        if ((open == '(' && c == ')')
+                                                || (open == '[' && c == ']')
+                                                || (open == '{' && c == '}'))
                                         {
                                             stack.pop();
                                         }
@@ -389,7 +504,7 @@ public class TokenStream
                                     }
                                 }
                             }
-                            // We have the entire macro usage
+                            // Entire macro usage
                             tokens.add(Token.stored(startRow, startColumn, MACRO_USE, macroContent.toString()));
                             continue;
                         }
@@ -430,7 +545,7 @@ public class TokenStream
                 }
             }
 
-            // Match float literal first
+            // Match float literal
             Matcher floatMatcher = Pattern.compile(FLOAT_LITERAL.regex).matcher(input.substring(index));
             if (floatMatcher.lookingAt())
             {
@@ -442,7 +557,7 @@ public class TokenStream
                 continue;
             }
 
-// Match int literal after
+            // Match int literal
             Matcher intMatcher = Pattern.compile(INT_LITERAL.regex).matcher(input.substring(index));
             if (intMatcher.lookingAt())
             {
@@ -454,7 +569,7 @@ public class TokenStream
                 continue;
             }
 
-            // Handle identifiers and keywords (incl. macro keywords expression/identifier)
+            // Handle identifiers and keywords
             Matcher idMatcher = Pattern.compile(IDENTIFIER.regex)
                     .matcher(input.substring(index));
             if (idMatcher.lookingAt())
@@ -507,8 +622,16 @@ public class TokenStream
         tokens.add(Token.getEnd()); // END token
     }
 
+    // For debugging
     public void printTokens()
     {
+        System.out.println("Package: " + packageName);
+        System.out.println("Imports:");
+        for (ImportDeclaration imp : imports)
+        {
+            System.out.println("  - " + imp);
+        }
+        System.out.println("\nTokens:");
         for (Token token : tokens)
         {
             StringBuilder sb = new StringBuilder();

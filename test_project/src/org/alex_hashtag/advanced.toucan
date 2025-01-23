@@ -1,0 +1,58 @@
+package org.alex_hashtag.advanced;
+
+/**
+ * Demonstrates:
+ *  - A generic class
+ *  - A trait
+ *  - Implementation
+ *  - Some references usage
+ */
+
+// A trait to be implemented
+public trait Showable
+{
+    void show();
+}
+
+// A generic class that might store some T
+public class AdvancedStuff<T>
+{
+    private T value;
+
+    public constructor new(T value)
+    {
+        this.value = value;
+    }
+
+    public void demo()
+    {
+        println!("AdvancedStuff holding value => " + this.value);
+    }
+}
+
+// We can implement Showable for the above:
+implement Showable for AdvancedStuff<int32>
+{
+    public void show()
+    {
+        println!("Showing an AdvancedStuff<int32> with value => " + this.value);
+    }
+}
+
+// A second demonstration, e.g. a class with inheritance
+mutable class Base
+{
+    public void doBase()
+    {
+        println!("Base class method");
+    }
+}
+
+class Derived extends Base
+{
+    public void doDerived()
+    {
+        super.doBase();
+        println!("Derived class method");
+    }
+}

@@ -9,6 +9,10 @@ import org.alex_hashtag.tokenization.Coordinates;
 import java.util.Optional;
 
 
+/**
+ * Represents a bitwise expression that operates on two sub-expressions using a specified bitwise operator.
+ * Implements the {@code Expression} interface, allowing evaluation of its type.
+ */
 public class BitwiseExpression implements Expression
 {
     @Getter

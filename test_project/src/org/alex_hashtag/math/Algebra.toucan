@@ -1,0 +1,19 @@
+package org.alex_hashtag.math;
+
+/**
+ * Another file in the same package, with a single public class: Algebra
+ */
+
+public class Algebra
+{
+    public static int32 squared(int32 x)
+    {
+        return x * x;
+    }
+
+    public static int32 cubed(int32 x)
+    {
+        return x * x * x;
+    }
+}
+\

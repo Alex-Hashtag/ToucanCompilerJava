@@ -9,6 +9,12 @@ import org.alex_hashtag.tokenization.Coordinates;
 import java.util.Optional;
 
 
+/**
+ * Represents an arithmetic expression in the form of a binary operation
+ * involving a left operand, an operator, and a right operand. This class
+ * implements the {@code Expression} interface, enabling retrieval of the
+ * type information for the expression.
+ */
 public class ArithmeticExpression implements Expression
 {
     @Getter

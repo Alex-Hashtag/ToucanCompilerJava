@@ -1,8 +1,65 @@
 package org.alex_hashtag;
 
-import org.alex_hashtag.Helper;
+/**
+ * Demonstrates:
+ *  - Basic imports
+ *  - Basic main
+ *  - Macro usage
+ *  - Enums from errors
+ */
+
+// Import from the macros file (we’ll use a star-import to get all macros defined there)
+import org.alex_hashtag.macros.*;
+
+// Import a single enum from the errors file
+import org.alex_hashtag.errors.errors.ArithmeticError;
+
+// Import the structures file entirely
+import org.alex_hashtag.structures.*;
+
+// Single import of advanced features to show usage
+import org.alex_hashtag.advanced.AdvancedStuff;
+
+// Import from the math folder
+import org.alex_hashtag.math.MathUtils.MathUtils;
+import org.alex_hashtag.math.Algebra.Algebra;
+
+// Import shapes with star
+import org.alex_hashtag.shapes.Circle.*;
+import org.alex_hashtag.shapes.Square.*;
 
 public void main()
 {
+    println!("=== Starting the Toucan Demo Project ===");
 
+    // 1) Using a macro from macros.toucan
+    repeat_hello!(2);
+
+    // 2) Using something from errors
+    float64 res = safeDivide(10.0, 2.0).catch();
+    println!("safeDivide(10,2) => " + res);
+
+    // 3) Using a struct from structures
+    Person person = Person{
+        .name = "Carol";
+        .age = 42;
+    };
+    println!("Person: " + person.name + ", age = " + person.age);
+
+    // 4) Using advanced class from advanced.toucan
+    AdvancedStuff adv = AdvancedStuff.new(3);
+    adv.demo();
+
+    // 5) Using math
+    println!("MathUtils.add(4,5) => " + MathUtils.add(4, 5));
+    println!("Algebra.squared(7) => " + Algebra.squared(7));
+
+    // 6) Using shapes
+    Circle c = Circle.new(10.0);
+    println!("Circle area => " + c.calculateArea());
+
+    Square s = Square.new(5);
+    println!("Square perimeter => " + s.perimeter());
+
+    println!("=== End of Toucan Demo ===");
 }

@@ -225,7 +225,6 @@ public class TokenStreamTest {
     public void testComplexInput() {
         // A more complex input combining several of the constructs
         String input = """
-                package my.package;
                 // Single line comment
                 /* Multi-line
                    comment */
@@ -248,7 +247,6 @@ public class TokenStreamTest {
         boolean foundClass = tokens.stream().anyMatch(token -> token.type == TokenType.CLASS);
         boolean foundInt32 = tokens.stream().anyMatch(token -> token.type == TokenType.INT32);
         boolean foundString = tokens.stream().anyMatch(token -> token.type == TokenType.STRING);
-        assertTrue(foundPackage, "Keyword 'package' should be recognized");
         assertTrue(foundClass, "Keyword 'class' should be recognized");
         assertTrue(foundInt32, "Keyword 'int32' should be recognized");
         assertTrue(foundString, "Keyword 'string' should be recognized");

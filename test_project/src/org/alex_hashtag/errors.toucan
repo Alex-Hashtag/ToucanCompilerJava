@@ -1,0 +1,20 @@
+package org.alex_hashtag.errors;
+
+/**
+ * This file might have multiple public members. We'll star-import or single-import them from outside.
+ * For demonstration, let's define an `errors` namespace containing an error enum, plus maybe another item.
+ */
+
+error ArithmeticError
+{
+    DivideByZeroError("Cannot divide by zero"),
+    OverflowError("Overflow happened in arithmetic operation"),
+}
+
+// Possibly define some other public member
+public enum MinorError
+{
+    SOMETHING_WRONG,
+    UNKNOWN
+}
+
