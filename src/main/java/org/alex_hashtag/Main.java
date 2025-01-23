@@ -5,7 +5,9 @@ import picocli.CommandLine;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -74,7 +76,6 @@ public class Main implements Callable<Integer> {
 
         @Override
         public Integer call() {
-            //try me bitch, 28 was here
             try {
                 List<Path> toucanFiles = new ArrayList<>();
                 for (Path path : paths) {
