@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'org.graalvm.buildtools.native' version '0.10.4'
+    id 'application' // Add this line
 }
 
 group = 'org.alex_hashtag'
@@ -12,14 +14,8 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-}
-
-test {
-    useJUnitPlatform()
-}
-
-dependencies {
     implementation 'info.picocli:picocli:4.7.6' // CLI support
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
     implementation 'com.electronwill.night-config:toml:3.6.0' // TOML parsing
     implementation 'org.projectlombok:lombok:1.18.36' // Lombok
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0' // Testing framework
@@ -27,3 +23,15 @@ dependencies {
     implementation 'org.jetbrains:annotations:24.0.1' // Optional annotations
     implementation 'org.eclipse.angus:angus-mail:2.0.3' // Latest version of Angus Mail
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21) // Replace 17 with your desired Java version
+    }
+}
+
+// Add this block to specify the main class
+application {
+    mainClass = 'org.alex_hashtag.Main'
+}
+
