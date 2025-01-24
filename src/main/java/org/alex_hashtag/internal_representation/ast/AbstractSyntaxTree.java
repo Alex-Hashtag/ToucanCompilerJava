@@ -5,14 +5,19 @@ import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotation;
 import org.alex_hashtag.internal_representation.macros.Macro;
 import org.alex_hashtag.internal_representation.types.Type;
+import org.alex_hashtag.tokenization.Token;
 import org.alex_hashtag.tokenization.TokenStream;
+import org.alex_hashtag.tokenization.TokenType;
+import static org.alex_hashtag.tokenization.TokenType.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class AbstractSyntaxTree
 {
-    List<Macro> macros;
+    List<Macro> macros = new ArrayList<>();
     List<Annotation> annotations;
     List<Type> types;
     List<Function> functions;
@@ -27,5 +32,23 @@ public class AbstractSyntaxTree
      */
     public AbstractSyntaxTree(List<TokenStream> tokenStreams)
     {
+
+    }
+
+    private void initMacros(List<TokenStream> tokenStreams)
+    {
+        for (TokenStream stream : tokenStreams)
+        {
+            Iterator<Token> iterator = stream.iterator();
+            while (iterator.hasNext())
+            {
+                if (iterator.next().type.equals(MACRO))
+                {
+                    Token current = iterator.next();
+
+                }
+            }
+
+        }
     }
 }

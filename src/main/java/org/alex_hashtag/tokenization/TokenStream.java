@@ -1,8 +1,10 @@
 package org.alex_hashtag.tokenization;
 
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +15,7 @@ import static org.alex_hashtag.tokenization.TokenType.*;
  * It manages various mappings for single-character tokens, multi-character operators, and keywords.
  * This class is designed to handle the parsing of input strings based on predefined token types.
  */
-public class TokenStream
+public class TokenStream implements Iterable<Token>
 {
     // Keep your existing static maps, etc.
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
@@ -655,5 +657,20 @@ public class TokenStream
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public @NotNull Iterator<Token> iterator() {
+        return Collections.unmodifiableList(tokens).iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Token> action) {
+        Collections.unmodifiableList(tokens).forEach(action);
+    }
+
+    @Override
+    public Spliterator<Token> spliterator() {
+        return Collections.unmodifiableList(tokens).spliterator();
     }
 }
