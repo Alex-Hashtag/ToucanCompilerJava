@@ -35,3 +35,12 @@ application {
     mainClass = 'org.alex_hashtag.Main'
 }
 
+graalvmNative {
+    binaries {
+        main {                        // First binary
+            mainClass = 'org.alex_hashtag.Main'
+            imageName = 'rainforest'
+            buildArgs.add('--no-fallback')
+        }
+    }
+}

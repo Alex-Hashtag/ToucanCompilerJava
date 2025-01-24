@@ -79,12 +79,12 @@ The compiler implementation is actively in development, with the following featu
 
 4. Run the compiled project:
    ```bash
-   ./build/native/nativeCompile/Rainforest path/to/rainforest.toml
+   ./build/native/nativeCompile/rainforest path/to/rainforest.toml
    ```
 
 5. Pass arguments directly to the executable:
    ```bash
-   ./build/native/nativeCompile/Rainforest --help
+   ./build/native/nativeCompile/rainforest --help
    ```
 
 ---
