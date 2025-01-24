@@ -59,7 +59,8 @@ The compiler implementation is actively in development, with the following featu
 
 ### Requirements
 - **Java**: Version 11 or higher.
-- **Maven**: For build automation.
+- **Gradle**: For build automation and native compilation.
+- **GraalVM**: To enable native image generation.
 
 ### Build and Run
 1. Clone the repository:
@@ -68,19 +69,22 @@ The compiler implementation is actively in development, with the following featu
    cd ToucanCompilerJava
    ```
 
-2. Build the compiler using Maven:
+2. Build the compiler using Gradle:
    ```bash
-   mvn clean install
+   gradle nativeCompile
    ```
 
-3. Compile a Toucan project:
+3. Locate the compiled executable:
+    - The native executable will be located in the `build/native/nativeCompile/` directory.
+
+4. Run the compiled project:
    ```bash
-   java -jar target/ToucanCompiler.jar path/to/rainforest.toml
+   ./build/native/nativeCompile/ToucanCompiler path/to/rainforest.toml
    ```
 
-4. Execute the compiled project:
+5. Pass arguments directly to the executable:
    ```bash
-   ./build/output
+   ./build/native/nativeCompile/ToucanCompiler --help
    ```
 
 ---
