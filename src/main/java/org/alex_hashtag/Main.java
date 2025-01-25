@@ -83,7 +83,7 @@ public class Main implements Callable<Integer>
         public Integer call()
         {
             // 1) Load rainforest.toml to get project info (especially 'root')
-            Rainforest rainforest = new Rainforest("rainforest.toml");
+
             String topDir = "test_project";  // e.g. "src" or "mySrcDir"
 
             try
@@ -93,7 +93,10 @@ public class Main implements Callable<Integer>
                 List<Path> toucanFiles = new ArrayList<>();
                 for (Path path : paths)
                 {
+
                     path = path.toAbsolutePath().normalize();
+                    System.out.println(path.toString());
+                    Rainforest rainforest = new Rainforest(path.toString()+"\\rainforest.toml");
                     if (Files.isDirectory(path))
                     {
                         try (Stream<Path> fileStream = recursive ? Files.walk(path) : Files.list(path))
