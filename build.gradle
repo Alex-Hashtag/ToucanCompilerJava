@@ -16,7 +16,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'info.picocli:picocli:4.7.6' // CLI support
     annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
-    implementation 'com.electronwill.night-config:toml:3.6.0' // TOML parsing
+    implementation 'com.moandjiezana.toml:toml4j:0.7.2'
     implementation 'org.projectlombok:lombok:1.18.36' // Lombok
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0' // Testing framework
     annotationProcessor 'org.projectlombok:lombok:1.18.36'

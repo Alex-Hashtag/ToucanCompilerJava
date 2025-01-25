@@ -2,7 +2,7 @@ package org.alex_hashtag.buildSystem;
 
 import jakarta.mail.internet.InternetAddress;
 
-import java.net.URL;
+import java.net.URI;
 
 
 public record Metadata(
@@ -10,9 +10,9 @@ public record Metadata(
         String description,
         String[] authors,
         InternetAddress[] emails,
-        URL website,          // Can be null
+        URI website,          // Can be null
         GenericVersion version,
-        URL repository        // Can be null
+        URI repository        // Can be null
 )
 {
 }

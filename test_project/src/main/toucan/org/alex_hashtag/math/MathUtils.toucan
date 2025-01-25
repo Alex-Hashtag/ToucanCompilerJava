@@ -1,0 +1,28 @@
+package org.alex_hashtag.math;
+
+/**
+ * This file has multiple public members.
+ * We'll either do `import org.alex_hashtag.math.MathUtils.*;`
+ * or single out specific classes: `MathUtils`, `Constants`, etc.
+ */
+
+// A public class:
+public class MathUtils
+{
+    public static int32 add(int32 a, int32 b)
+    {
+        return a + b;
+    }
+
+    public static int32 subtract(int32 a, int32 b)
+    {
+        return a - b;
+    }
+}
+
+// A second public class in the same file
+public class Constants
+{
+    public static const float64 PI = 3.1415926535;
+    public static const float64 E  = 2.7182818284;
+}

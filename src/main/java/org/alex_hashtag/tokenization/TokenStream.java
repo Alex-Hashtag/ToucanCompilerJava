@@ -1,8 +1,10 @@
 package org.alex_hashtag.tokenization;
 
 import lombok.Getter;
+import org.alex_hashtag.errors.TokenizationErrorManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -10,14 +12,9 @@ import java.util.regex.Pattern;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-/**
- * The TokenStream class is responsible for tokenizing input into a sequence of tokens.
- * It manages various mappings for single-character tokens, multi-character operators, and keywords.
- * This class is designed to handle the parsing of input strings based on predefined token types.
- */
+
 public class TokenStream implements Iterable<Token>
 {
-    // Keep your existing static maps, etc.
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
     private static final Map<String, TokenType> singleCharTokenMap = new HashMap<>();
     private static final Set<String> keywordsSet = new HashSet<>();
@@ -25,7 +22,7 @@ public class TokenStream implements Iterable<Token>
 
     static
     {
-        // (Unchanged) multi-char operators
+        // (Unchanged multi-char operators)
         for (TokenType type : List.of(
                 BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS,
                 BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED,
@@ -41,7 +38,7 @@ public class TokenStream implements Iterable<Token>
 
     static
     {
-        // (Unchanged) single-char tokens
+        // (Unchanged single-char tokens)
         singleCharTokenMap.put(";", SEMI_COLON);
         singleCharTokenMap.put(":", COLON);
         singleCharTokenMap.put(".", DOT);
@@ -69,7 +66,7 @@ public class TokenStream implements Iterable<Token>
 
     static
     {
-        // (Unchanged) keywords
+        // (Unchanged keywords)
         String[] keywords = {
                 "void", "int8", "int16", "int32", "int64", "int128",
                 "uint8", "uint16", "uint32", "uint64", "uint128",
@@ -88,129 +85,119 @@ public class TokenStream implements Iterable<Token>
         for (String kw : keywords)
         {
             keywordsSet.add(kw);
-            keywordMap.put(kw, TokenType.valueOf(kw.toUpperCase()));
+            keywordMap.put(kw, valueOf(kw.toUpperCase()));
         }
     }
 
-    // The existing tokens list
-    public final LinkedList<Token> tokens;
+    // Token collection, etc.
+    public final LinkedList<Token> tokens = new LinkedList<>();
+    // Reference to our manager
+    private final TokenizationErrorManager errorManager;
     @Getter
-    private final List<ImportDeclaration> imports = new ArrayList<>();
-    // ----------------------------------------------
-    // New fields for the package name & import list:
-    // ----------------------------------------------
+    private List<ImportDeclaration> imports = new ArrayList<>();
     @Getter
     private String packageName = null;
 
-    /**
-     * Parses the given input string into a stream of tokens. The method analyzes the input for
-     * various types of lexical elements (e.g., comments, string literals, character literals,
-     * annotations, macros) and stores them as tokens with their corresponding details such as
-     * type and location (row and column).
-     *
-     * @param input The raw input string to be tokenized. This string will be parsed for
-     *              syntactical elements such as whitespace, comments, string literals,
-     *              annotations, macro usages, and more.
-     */
-    public TokenStream(String input)
-    {
-        this.tokens = new LinkedList<>();
-        tokens.add(Token.getStart()); // START token
 
-        // Normalize line endings to \n to ensure consistent row counting
+    public TokenStream(Path filePath, String input)
+    {
+        this.imports = new ArrayList<>();
+
+        // 1) Initialize the error manager with the file path and file contents
+        this.errorManager = new TokenizationErrorManager(
+                filePath.toAbsolutePath().toString(),  // full file path
+                input                            // entire text for line-by-line references
+        );
+
+        tokens.add(Token.getStart());
+
+        // Normalize line endings
         input = input.replace("\r\n", "\n").replace("\r", "\n");
 
-        // We'll accumulate lines that are *not* package/import in here,
-        // but keep line numbering correct by inserting blank lines for
-        // any line we skip (package/import).
         StringBuilder nonImportLines = new StringBuilder();
-
-        // Process the input line by line
-        String[] lines = input.split("\n", -1); // The -1 limit ensures trailing empty strings are included
+        String[] lines = input.split("\n", -1);
         for (String line : lines)
         {
             String trimmed = line.trim();
-
             if (trimmed.startsWith("package "))
             {
-                // Something like: package com.example.coolStuff;
                 String afterPkg = trimmed.substring("package ".length()).trim();
-                // Typically a package line ends with a semicolon in many languages,
-                // if you want to allow that, you can strip it out:
                 if (afterPkg.endsWith(";"))
                 {
                     afterPkg = afterPkg.substring(0, afterPkg.length() - 1).trim();
                 }
-                this.packageName = afterPkg; // store it
-
-                // Insert a blank line in place so row #s line up
+                this.packageName = afterPkg;
                 nonImportLines.append("\n");
             }
             else if (trimmed.startsWith("import "))
             {
-                // Could be "import something.*;" or "import something;"
                 parseImport(false, trimmed.substring("import ".length()).trim());
                 nonImportLines.append("\n");
             }
             else if (trimmed.startsWith("static import "))
             {
-                // Could be "static import something.member;"
                 parseImport(true, trimmed.substring("static import ".length()).trim());
                 nonImportLines.append("\n");
             }
             else
             {
-                // Not a package/import line. Keep it for normal tokenization.
                 nonImportLines.append(line).append('\n');
             }
         }
 
-        // Now tokenize everything else, with line numbering intact.
+        // Now tokenize everything else
         tokenize(nonImportLines.toString());
+
+        // Example post-check: no package? => error
+        if (this.packageName == null)
+        {
+            errorManager.reportError(
+                    new TokenizationErrorManager.TokenizationError(
+                            TokenizationErrorManager.ErrorType.MISSING_PACKAGE,
+                            "Source file does not begin with a 'package' statement.",
+                            1,
+                            1,
+                            "N/A",
+                            "Add a package declaration, e.g. 'package com.example;'"
+                    )
+            );
+        }
+
+        // If there are errors, print them in Rust style and exit
+        if (errorManager.hasErrors())
+        {
+            errorManager.printErrors(System.err);
+            System.exit(1);
+        }
     }
 
     private void parseImport(boolean isStatic, String importLine)
     {
-        // Typically, lines might end with a semicolon: e.g. import foo.bar.*;
         if (importLine.endsWith(";"))
         {
             importLine = importLine.substring(0, importLine.length() - 1).trim();
         }
-        // If there's a trailing .*:
         if (importLine.endsWith(".*"))
         {
             String base = importLine.substring(0, importLine.length() - 2).trim();
-            // star import
             imports.add(new ImportDeclaration(isStatic, base, "*"));
         }
         else
         {
-            // Might be something like "toucan.util.Math.Constants"
-            // or "toucan.util.Math.Constants.PI"
-            // We'll see if there's a final dot segment
             int lastDot = importLine.lastIndexOf('.');
             if (lastDot < 0)
             {
-                // no dot => entire thing is the base
                 imports.add(new ImportDeclaration(isStatic, importLine, null));
             }
             else
             {
-                // We can treat the portion after the last dot as "member" if user wants
-                // In Toucan we can do: static import foo.Bar.BAZ
                 String base = importLine.substring(0, lastDot);
                 String member = importLine.substring(lastDot + 1);
-                // If the 'member' part starts with uppercase and your language always puts
-                // uppercase for classes, etc., you can interpret that differently. For now, let's store it as-is.
                 imports.add(new ImportDeclaration(isStatic, base, member));
             }
         }
     }
 
-    /**
-     * Actually does the tokenization on the leftover lines
-     * (plus blank lines where we skipped package/import).
-     */
     private void tokenize(String input)
     {
         int index = 0;
@@ -240,7 +227,7 @@ public class TokenStream implements Iterable<Token>
             // Handle comments
             if (input.startsWith("//", index))
             {
-                // Single-line
+                // Single-line comment
                 int startColumn = column;
                 int startIndex = index;
                 index += 2;
@@ -256,7 +243,7 @@ public class TokenStream implements Iterable<Token>
             }
             if (input.startsWith("/*", index))
             {
-                // Multi-line
+                // Multi-line comment
                 int startRow = row;
                 int startColumn = column;
                 int startIndex = index;
@@ -289,7 +276,7 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // Handle multi-line strings (""" ... """)
+            // Handle triple-quoted strings ("""...""")
             if (input.startsWith("\"\"\"", index))
             {
                 int startRow = row;
@@ -324,7 +311,7 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // Handle regular strings
+            // Handle normal strings
             if (currentChar == '"')
             {
                 int startRow = row;
@@ -352,17 +339,22 @@ public class TokenStream implements Iterable<Token>
                     {
                         if (c == '\n')
                         {
-                            // Unclosed string
+                            // Found newline before closing quote => unclosed string
                             tokens.add(Token.stored(startRow, startColumn, INVALID,
                                     input.substring(startIndex, index)));
+
+                            errorManager.reportError(new TokenizationErrorManager.TokenizationError(
+                                    TokenizationErrorManager.ErrorType.UNCLOSED_STRING,
+                                    "String literal not closed before newline.",
+                                    row, column,
+                                    input.substring(startIndex, index)
+                            ));
+
                             row++;
                             column = 0;
                             continue loop;
                         }
-                        else
-                        {
-                            column++;
-                        }
+                        column++;
                         index++;
                     }
                 }
@@ -398,22 +390,47 @@ public class TokenStream implements Iterable<Token>
                     {
                         if (c == '\n')
                         {
+                            // Possibly unclosed char literal
+                            tokens.add(Token.stored(startRow, startColumn, INVALID,
+                                    input.substring(startIndex, index)));
+
+                            errorManager.reportError(new TokenizationErrorManager.TokenizationError(
+                                    TokenizationErrorManager.ErrorType.INVALID_CHAR_LITERAL,
+                                    "Unclosed character literal before newline.",
+                                    row, column,
+                                    input.substring(startIndex, index)
+                            ));
+
                             row++;
                             column = 0;
-                        }
-                        else
-                        {
-                            column++;
+                            continue loop;
                         }
                         index++;
+                        column++;
                     }
                 }
                 String charText = input.substring(startIndex, index);
-                tokens.add(Token.stored(startRow, startColumn, CHAR_LITERAL, charText));
+
+                // Check if it's more than one character (heuristic)
+                // e.g.  'abc'
+                if (charText.length() > 4) // naive length check
+                {
+                    tokens.add(Token.stored(startRow, startColumn, INVALID, charText));
+                    errorManager.reportError(new TokenizationErrorManager.TokenizationError(
+                            TokenizationErrorManager.ErrorType.INVALID_CHAR_LITERAL,
+                            "Character literal has multiple characters.",
+                            startRow, startColumn,
+                            charText
+                    ));
+                }
+                else
+                {
+                    tokens.add(Token.stored(startRow, startColumn, CHAR_LITERAL, charText));
+                }
                 continue;
             }
 
-            // Handle annotation usage: @Getter
+            // Handle annotation usage: e.g. @Getter
             if (currentChar == '@')
             {
                 int startRow = row;
@@ -425,22 +442,18 @@ public class TokenStream implements Iterable<Token>
                 while (index < input.length())
                 {
                     char nc = input.charAt(index);
-                    // Stop if non-alphanumeric and not underscore
                     if (!Character.isLetterOrDigit(nc) && nc != '_')
-                    {
                         break;
-                    }
                     annotationName.append(nc);
                     index++;
                     column++;
                 }
-
                 String combined = "@" + annotationName;
                 tokens.add(Token.stored(startRow, startColumn, ANNOTATION_USE, combined));
                 continue;
             }
 
-            // --- Handle macro usage: e.g. sum!(...) ---
+            // Handle macro usage: e.g. sum!(...)
             {
                 int lookAheadIndex = index;
                 Matcher macroCheck = Pattern.compile(IDENTIFIER.regex).matcher(input.substring(lookAheadIndex));
@@ -448,28 +461,22 @@ public class TokenStream implements Iterable<Token>
                 {
                     String possibleMacroName = macroCheck.group();
                     int nameLen = possibleMacroName.length();
-                    // Check if next char is '!'
                     if (lookAheadIndex + nameLen < input.length()
                             && input.charAt(lookAheadIndex + nameLen) == '!')
                     {
-                        // Then check if after '!' there's '(', '[', or '{'
                         char nextSym = (lookAheadIndex + nameLen + 1 < input.length())
                                 ? input.charAt(lookAheadIndex + nameLen + 1)
                                 : '\0';
 
                         if (nextSym == '(' || nextSym == '[' || nextSym == '{')
                         {
-                            // We found a macro usage
                             int startRow = row;
                             int startColumn = column;
-
-                            // Move the real index forward by nameLen + 1 (for '!')
+                            // Advance over macro name + '!'
                             index += nameLen + 1;
                             column += nameLen + 1;
 
-                            // Build the macro content
                             StringBuilder macroContent = new StringBuilder(possibleMacroName + "!");
-                            // Parse the bracketed content with nesting
                             Deque<Character> stack = new ArrayDeque<>();
                             stack.push(nextSym);
                             macroContent.append(nextSym);
@@ -482,31 +489,26 @@ public class TokenStream implements Iterable<Token>
                                 macroContent.append(c);
                                 index++;
                                 column++;
-
                                 if (c == '(' || c == '[' || c == '{')
                                 {
                                     stack.push(c);
                                 }
                                 else if (c == ')' || c == ']' || c == '}')
                                 {
-                                    if (!stack.isEmpty())
+                                    char open = stack.peek();
+                                    if ((open == '(' && c == ')')
+                                            || (open == '[' && c == ']')
+                                            || (open == '{' && c == '}'))
                                     {
-                                        char open = stack.peek();
-                                        if ((open == '(' && c == ')')
-                                                || (open == '[' && c == ']')
-                                                || (open == '{' && c == '}'))
-                                        {
-                                            stack.pop();
-                                        }
-                                        else
-                                        {
-                                            // Mismatched bracket - treat as error or keep going
-                                            stack.pop();
-                                        }
+                                        stack.pop();
+                                    }
+                                    else
+                                    {
+                                        // Mismatched bracket => optional error check
+                                        stack.pop();
                                     }
                                 }
                             }
-                            // Entire macro usage
                             tokens.add(Token.stored(startRow, startColumn, MACRO_USE, macroContent.toString()));
                             continue;
                         }
@@ -514,7 +516,7 @@ public class TokenStream implements Iterable<Token>
                 }
             }
 
-            // Handle multi-character operators (like '<<', '>>', '&&', '||', etc.)
+            // Handle multi-character operators
             boolean matchedOperator = false;
             for (Map.Entry<String, TokenType> entry : multiCharOperatorMap.entrySet())
             {
@@ -531,7 +533,7 @@ public class TokenStream implements Iterable<Token>
             }
             if (matchedOperator) continue;
 
-            // Check for macro variables: starts with '$'
+            // Check for macro variables: $foo
             if (currentChar == '$')
             {
                 Matcher macroVarMatcher = Pattern.compile(MACRO_VARIABLE.regex)
@@ -571,15 +573,14 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // Handle identifiers and keywords
-            Matcher idMatcher = Pattern.compile(IDENTIFIER.regex)
-                    .matcher(input.substring(index));
+            // Handle identifiers / keywords
+            Matcher idMatcher = Pattern.compile(IDENTIFIER.regex).matcher(input.substring(index));
             if (idMatcher.lookingAt())
             {
                 String word = idMatcher.group();
                 int startColumn = column;
 
-                // Check for special macro keywords
+                // Check macro-specific keywords
                 if (word.equals("expression"))
                 {
                     tokens.add(Token.basic(row, startColumn, MACRO_EXPR));
@@ -594,7 +595,7 @@ public class TokenStream implements Iterable<Token>
                 }
                 else
                 {
-                    // It's a normal identifier
+                    // Normal identifier
                     tokens.add(Token.stored(row, startColumn, IDENTIFIER, word));
                 }
 
@@ -603,7 +604,7 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // Handle single-character operators/punctuations
+            // Handle single-char operators/punctuations
             String ch = String.valueOf(input.charAt(index));
             if (singleCharTokenMap.containsKey(ch))
             {
@@ -614,9 +615,15 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // If none matched, it's invalid
+            // If we reach here, it's an invalid token
             int startColumn = column;
             tokens.add(Token.stored(row, startColumn, INVALID, String.valueOf(input.charAt(index))));
+            errorManager.reportError(new TokenizationErrorManager.TokenizationError(
+                    TokenizationErrorManager.ErrorType.INVALID_TOKEN,
+                    "Unrecognized token encountered.",
+                    row, column,
+                    String.valueOf(input.charAt(index))
+            ));
             index++;
             column++;
         }
@@ -660,17 +667,20 @@ public class TokenStream implements Iterable<Token>
     }
 
     @Override
-    public @NotNull Iterator<Token> iterator() {
+    public @NotNull Iterator<Token> iterator()
+    {
         return Collections.unmodifiableList(tokens).iterator();
     }
 
     @Override
-    public void forEach(Consumer<? super Token> action) {
+    public void forEach(Consumer<? super Token> action)
+    {
         Collections.unmodifiableList(tokens).forEach(action);
     }
 
     @Override
-    public Spliterator<Token> spliterator() {
+    public Spliterator<Token> spliterator()
+    {
         return Collections.unmodifiableList(tokens).spliterator();
     }
 }

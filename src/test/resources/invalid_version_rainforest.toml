@@ -7,7 +7,7 @@ main = "src/org/alex_hashtag/Main.toucan"
 
 # Dependancies for ther project
 # Follow format publishor::project::version
-dependencies  = [
+dependencies = [
     "alex_hashtag::example_dependancy1::1.0.0",
     "alex_hashtag::example_dependancy2::0.5.10"
 ]

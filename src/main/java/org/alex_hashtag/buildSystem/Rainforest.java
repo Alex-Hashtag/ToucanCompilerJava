@@ -1,12 +1,11 @@
 package org.alex_hashtag.buildSystem;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.file.FileConfig;
+import com.moandjiezana.toml.Toml;
 import jakarta.mail.internet.InternetAddress;
 import org.alex_hashtag.errors.TomlErrorManager;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,21 +28,21 @@ public class Rainforest
     {
         TomlErrorManager errorManager = new TomlErrorManager();
 
-        try (FileConfig config = FileConfig.of(path))
+        try
         {
-            config.load();
+            Toml config = new Toml().read(Paths.get(path).toFile());
 
             // Parse [project] section
-            if (config.contains("project"))
+            if (config.containsTable("project"))
             {
-                CommentedConfig projectConfig = config.get("project");
+                Toml projectConfig = config.getTable("project");
                 try
                 {
-                    String compilerStr = projectConfig.getOrElse("compiler", "0.1.0"); // Default compiler version
+                    String compilerStr = projectConfig.getString("compiler", "0.1.0");
                     GenericVersion compilerVersion = GenericVersion.parse(compilerStr);
 
-                    String root = projectConfig.getOrElse("root", "default_root");
-                    String mainPathStr = projectConfig.getOrElse("main", "src/Main.toucan");
+                    String root = projectConfig.getString("root", "default_root");
+                    String mainPathStr = projectConfig.getString("main", "src/Main.toucan");
                     Path mainPath = Paths.get(mainPathStr);
 
                     project = new Project(compilerVersion, root, mainPath);
@@ -58,20 +57,20 @@ public class Rainforest
             }
 
             // Parse [metadata] section
-            if (config.contains("metadata"))
+            if (config.containsTable("metadata"))
             {
-                CommentedConfig metadataConfig = config.get("metadata");
+                Toml metadataConfig = config.getTable("metadata");
                 try
                 {
-                    String name = metadataConfig.getOrElse("name", "Unnamed Project");
-                    String description = metadataConfig.getOrElse("description", "");
+                    String name = metadataConfig.getString("name", "Unnamed Project");
+                    String description = metadataConfig.getString("description", "");
 
                     // Authors
-                    List<String> authorsList = metadataConfig.getOrElse("authors", new ArrayList<String>());
+                    List<String> authorsList = metadataConfig.getList("authors", new ArrayList<>());
                     String[] authors = authorsList.toArray(new String[0]);
 
                     // Emails
-                    List<String> emailsList = metadataConfig.getOrElse("emails", new ArrayList<String>());
+                    List<String> emailsList = metadataConfig.getList("emails", new ArrayList<>());
                     InternetAddress[] emails = new InternetAddress[emailsList.size()];
                     for (int i = 0; i < emailsList.size(); i++)
                     {
@@ -85,34 +84,34 @@ public class Rainforest
                     }
 
                     // Website
-                    String websiteStr = metadataConfig.getOrElse("website", "");
-                    URL website = null;
+                    String websiteStr = metadataConfig.getString("website", "");
+                    URI website = null;
                     if (!websiteStr.isEmpty())
                     {
                         try
                         {
-                            website = new URL(websiteStr);
-                        } catch (MalformedURLException e)
+                            website = new URI(websiteStr);
+                        } catch (URISyntaxException e)
                         {
-                            errorManager.addError("Metadata Section - Website", "Invalid URL: " + websiteStr);
+                            errorManager.addError("Metadata Section - Website", "Invalid URI: " + websiteStr);
                         }
                     }
 
                     // Version
-                    String versionStr = metadataConfig.getOrElse("version", "0.1.0");
+                    String versionStr = metadataConfig.getString("version", "0.1.0");
                     GenericVersion version = GenericVersion.parse(versionStr);
 
                     // Repository
-                    String repositoryStr = metadataConfig.getOrElse("repository", "");
-                    URL repository = null;
+                    String repositoryStr = metadataConfig.getString("repository", "");
+                    URI repository = null;
                     if (!repositoryStr.isEmpty())
                     {
                         try
                         {
-                            repository = new URL(repositoryStr);
-                        } catch (MalformedURLException e)
+                            repository = new URI(repositoryStr);
+                        } catch (URISyntaxException e)
                         {
-                            errorManager.addError("Metadata Section - Repository", "Invalid URL: " + repositoryStr);
+                            errorManager.addError("Metadata Section - Repository", "Invalid URI: " + repositoryStr);
                         }
                     }
 
@@ -132,7 +131,6 @@ public class Rainforest
             }
             else
             {
-                // If metadata section is missing, use default values
                 metadata = new Metadata(
                         "Unnamed Project",
                         "",
@@ -145,43 +143,20 @@ public class Rainforest
             }
 
             // Parse [build] section
-            if (config.contains("build"))
+            if (config.containsTable("build"))
             {
-                CommentedConfig buildConfig = config.get("build");
+                Toml buildConfig = config.getTable("build");
                 try
                 {
-                    // Optimization
-                    String optimizationStr = buildConfig.getOrElse("optimization", "-O0");
-                    Optimization optimization;
-                    try
-                    {
-                        optimization = Optimization.valueOf(optimizationStr.replace("-", "").toUpperCase());
-                    } catch (IllegalArgumentException e)
-                    {
-                        errorManager.addError("Build Section - Optimization", "Invalid optimization level: " + optimizationStr);
-                        optimization = Optimization.O0; // Default optimization
-                    }
+                    String optimizationStr = buildConfig.getString("optimization", "-O0");
+                    Optimization optimization = Optimization.valueOf(optimizationStr.replace("-", "").toUpperCase());
 
-                    // Executable
-                    String executableStr = buildConfig.getOrElse("executable", "build/output");
-                    Path executable = Paths.get(executableStr);
-
-                    // Logs
-                    String logsStr = buildConfig.getOrElse("logs", "build/logs");
-                    Path logs = Paths.get(logsStr);
-
-                    // Intermediates
-                    String intermediatesStr = buildConfig.getOrElse("intermediates", "build/intermediate");
-                    Path intermediates = Paths.get(intermediatesStr);
-
-                    // OS
-                    String os = buildConfig.getOrElse("os", "linux");
-
-                    // Architecture
-                    String architecture = buildConfig.getOrElse("architecture", "x86_64");
-
-                    // Debug Symbols
-                    boolean debugSymbols = buildConfig.getOrElse("debug_symbols", false);
+                    Path executable = Paths.get(buildConfig.getString("executable", "build/output"));
+                    Path logs = Paths.get(buildConfig.getString("logs", "build/logs"));
+                    Path intermediates = Paths.get(buildConfig.getString("intermediates", "build/intermediate"));
+                    String os = buildConfig.getString("os", "linux");
+                    String architecture = buildConfig.getString("architecture", "x86_64");
+                    boolean debugSymbols = buildConfig.getBoolean("debug_symbols", false);
 
                     build = new Build(
                             optimization,
@@ -199,7 +174,6 @@ public class Rainforest
             }
             else
             {
-                // If build section is missing, use default values
                 build = new Build(
                         Optimization.O0,
                         Paths.get("build/output"),
@@ -213,24 +187,19 @@ public class Rainforest
 
             // Parse dependencies
             dependencies = new ArrayList<>();
-            if (config.contains("project.dependencies"))
+            List<String> depsList = config.getList("project.dependencies", new ArrayList<>());
+            for (String depStr : depsList)
             {
-                List<String> depsList = config.getOrElse("project.dependencies", new ArrayList<String>());
-                for (String depStr : depsList)
+                try
                 {
-                    try
-                    {
-                        Dependency dep = Dependency.parse(depStr);
-                        dependencies.add(dep);
-                    } catch (IllegalArgumentException e)
-                    {
-                        errorManager.addError("Dependencies Section", "Invalid dependency format: " + depStr);
-                    }
+                    Dependency dep = Dependency.parse(depStr);
+                    dependencies.add(dep);
+                } catch (IllegalArgumentException e)
+                {
+                    errorManager.addError("Dependencies Section", "Invalid dependency format: " + depStr);
                 }
             }
-            // If dependencies are missing, leave the list empty as per requirements.
 
-            // After parsing, check for any errors
             if (errorManager.hasErrors())
             {
                 errorManager.printErrors();
@@ -239,7 +208,6 @@ public class Rainforest
 
         } catch (IllegalStateException e)
         {
-            // Re-throwing after errorManager handled the errors
             throw e;
         }
     }

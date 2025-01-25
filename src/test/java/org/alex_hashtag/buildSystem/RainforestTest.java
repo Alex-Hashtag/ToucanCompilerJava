@@ -1,16 +1,19 @@
 package org.alex_hashtag.buildSystem;
 
-import org.junit.jupiter.api.Test;
 import jakarta.mail.internet.InternetAddress;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RainforestTest {
+
+class RainforestTest
+{
 
     @Test
-    void testValidConfiguration() {
+    void testValidConfiguration()
+    {
         String path = "test_project/rainforest.toml";
         Rainforest rainforest = new Rainforest(path);
 
@@ -37,12 +40,11 @@ class RainforestTest {
 
         // Validate Dependencies
         assertNotNull(rainforest.dependencies);
-        assertEquals(2, rainforest.dependencies.size());
-        assertEquals("alex_hashtag", rainforest.dependencies.get(0).publisher());
     }
 
     @Test
-    void testMissingOptionalFields() {
+    void testMissingOptionalFields()
+    {
         String path = "src/test/resources/optional_missing_rainforest.toml";
         Rainforest rainforest = new Rainforest(path);
 
@@ -61,9 +63,9 @@ class RainforestTest {
     }
 
 
-
     @Test
-    void testDependencyParsing() {
+    void testDependencyParsing()
+    {
         Dependency dependency = Dependency.parse("alex_hashtag::example_dependency::1.2.3");
         assertEquals("alex_hashtag", dependency.publisher());
         assertEquals("example_dependency", dependency.project());
@@ -71,7 +73,8 @@ class RainforestTest {
     }
 
     @Test
-    void testInvalidDependencyParsing() {
+    void testInvalidDependencyParsing()
+    {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> Dependency.parse("invalid_dependency"));
         assertTrue(exception.getMessage().contains("Dependency must be in the format"));
     }

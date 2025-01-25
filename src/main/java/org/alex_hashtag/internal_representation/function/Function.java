@@ -36,7 +36,7 @@ public class Function implements Generic, Annotatable
      * - "constructor": indicates if the function is a constructor (e.g., "true" or "false").
      * - "overrides": specifies if the function overrides another (e.g., "true" or "false").
      * - "unsafe": marks the function as unsafe (e.g., "true" or "false").
-     *
+     * <p>
      * These properties are used to provide metadata about the function and its behavior.
      */
     Map<String, String> properties = new HashMap<>();
@@ -44,7 +44,7 @@ public class Function implements Generic, Annotatable
      * A list containing the generic arguments associated with the definition of a function or type.
      * Each generic argument is represented by a {@link VariableDeclarationExpression}, which contains
      * details such as the identifier, type, and mutability of the argument.
-     *
+     * <p>
      * The generic arguments define type parameters that can be used within the context of the function
      * or type where this list is maintained. If no generic arguments are provided, the list remains empty.
      */

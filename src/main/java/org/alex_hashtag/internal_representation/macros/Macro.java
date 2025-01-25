@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.alex_hashtag.internal_representation.util.Locatable;
 import org.alex_hashtag.tokenization.Coordinates;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +14,13 @@ public class Macro implements Locatable
     Coordinates location;
     String name;
     List<Arm> arms;
+
+    public Macro(Coordinates location, String name)
+    {
+        this.location = location;
+        this.name = name;
+        this.arms = new ArrayList<>();
+    }
 
     static class Arm
     {
@@ -108,13 +114,6 @@ public class Macro implements Locatable
             }
 
         }
-    }
-
-    public Macro(Coordinates location, String name)
-    {
-        this.location = location;
-        this.name = name;
-        this.arms = new ArrayList<>();
     }
 
 }

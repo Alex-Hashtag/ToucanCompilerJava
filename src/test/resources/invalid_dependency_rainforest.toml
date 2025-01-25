@@ -7,7 +7,7 @@ main = "src/org/alex_hashtag/Main.toucan"
 
 # Dependancies for ther project
 # Follow format publishor::project::version
-dependencies  = [
+dependencies = [
     "invalid_dependency"
 ]
 

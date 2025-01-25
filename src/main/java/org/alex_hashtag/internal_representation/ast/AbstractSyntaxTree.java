@@ -7,12 +7,12 @@ import org.alex_hashtag.internal_representation.macros.Macro;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.tokenization.Token;
 import org.alex_hashtag.tokenization.TokenStream;
-import org.alex_hashtag.tokenization.TokenType;
-import static org.alex_hashtag.tokenization.TokenType.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.alex_hashtag.tokenization.TokenType.MACRO;
 
 
 public class AbstractSyntaxTree
