@@ -53,7 +53,7 @@ public class Macro implements Locatable
          * - ONE_OR_MORE  => `+`
          * - ZERO_OR_ONE  => `?`
          */
-        enum RepetitionKind
+        public enum RepetitionKind
         {
             ZERO_OR_MORE,
             ONE_OR_MORE,
@@ -109,7 +109,7 @@ public class Macro implements Locatable
         }
 
         @Getter
-        static class RepetitionElement extends PatternElement
+        public static class RepetitionElement extends PatternElement
         {
             private final Pattern subPattern;        // The pattern inside $( ... )
             private final RepetitionKind repetition; // ZERO_OR_MORE (*), ONE_OR_MORE (+), or ZERO_OR_ONE (?)

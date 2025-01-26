@@ -7,7 +7,7 @@ public enum TokenType
     DOT("."),
     COMMA(","),
 
-    //Braces
+    // Braces
     BRACE_OPEN("("),
     BRACE_CLOSED(")"),
     BRACKET_OPEN("\\["),
@@ -17,7 +17,7 @@ public enum TokenType
     ARROW_OPEN("<"),
     ARROW_CLOSED(">"),
 
-    //Operators
+    // Operators
     ASSIGNMENT("="),
     ADDITION("\\+"),
     SUBTRACTION("-"),
@@ -25,7 +25,7 @@ public enum TokenType
     DIVISION("/"),
     MODULO("%"),
 
-    //LOGICAL
+    // LOGICAL
     LOGICAL_AND("and"),
     LOGICAL_OR("or"),
     LOGICAL_NOT("\\!"),
@@ -36,7 +36,7 @@ public enum TokenType
     LESS_THAN("<"),
     LESS_THAN_OR_EQUAL("<="),
 
-    //Bit-Wise
+    // Bit-Wise
     BIT_SHIFT_LEFT("<<"),
     BIT_SHIFT_RIGHT(">>"),
     BIT_SHIFT_RIGHT_UNSIGNED(">>>"),
@@ -45,7 +45,7 @@ public enum TokenType
     BITWISE_XOR("\\^"),
     BITWISE_NOT("~"),
 
-    // Multi-character operators
+    // Multi-char operators
     BIT_SHIFT_LEFT_EQUALS("<<="),
     BIT_SHIFT_RIGHT_EQUALS(">>="),
     BIT_SHIFT_RIGHT_UNSIGNED_EQUALS(">>>="),
@@ -61,38 +61,11 @@ public enum TokenType
     DECREMENT("--"),
     DOUBLE_COLON("::"),
 
-    //Types
-//    INT8("int8"),
-//    INT16("int16"),
-//    INT32("int32"),
-//    INT64("int64"),
-//    INT128("int128"),
-//    UINT8("uint8"),
-//    UINT16("uint16"),
-//    UINT32("uint32"),
-//    UINT64("uint64"),
-//    UINT128("uint128"),
-//    FLOAT16("float16"),
-//    FLOAT32("float32"),
-//    FLOAT64("float64"),
-//    FLOAT80("float80"),
-//    FLOAT128("float128"),
-//    CHAR("char"),
-//    RUNE("rune"),
-//    STRING("string"),
-//    BOOL("bool"),
-//    VOID("void"),
-//    TYPE("type"),
-//    LAMBDA("lambda"),
-
+    // Additional
     VAR("var"),
-
-    //Variable Modifiers
     MUTABLE("mutable"),
     CONST("const"),
     STATIC("static"),
-
-    //Control Flow
     IF("if"),
     ELSE("else"),
     WHILE("while"),
@@ -103,13 +76,9 @@ public enum TokenType
     CONTINUE("continue"),
     BREAK("break"),
     YIELD("yield"),
-
-    //Functions
     RETURN("return"),
     INLINE("inline"),
     ECHO("echo"),
-
-    //Types
     STRUCT("struct"),
     TYPEDEF("typedef"),
     ENUM("enum"),
@@ -117,8 +86,6 @@ public enum TokenType
     IMPLEMENT("implement"),
     TEMPLATE("template"),
     OPERATIONS("operations"),
-
-    //OOP
     CLASS("class"),
     CONSTRUCTOR("constructor"),
     IMPLICIT("implicit"),
@@ -128,41 +95,33 @@ public enum TokenType
     SUPER("super"),
     ABSTRACT("abstract"),
     NULL("null"),
-
-
-    //Access Modifiers
     PUBLIC("public"),
     PRIVATE("private"),
     PROTECTED("protected"),
-
-    //Systems Programming
     SYS("sys"),
     TYPEOF("typeof"),
     SIZEOF("sizeof"),
     UNSAFE("unsafe"),
-
-    //Packages
     PACKAGE("package"),
     IMPORT("import"),
-//    NAMESPACE("namespace"),
 
-    //Macros
-    MACRO("macro"),       // existing macro keyword
+    // Macros
+    MACRO("macro"),
     ANNOTATION("annotation"),
-
-    // *** NEW TOKENS FOR ANNOTATION & MACROS ***
-    ANNOTATION_USE(""),   // logic-driven, not purely regex-based
-    MACRO_USE(""),        // logic-driven
-    MACRO_VARIABLE("^\\$[A-Za-z_]\\w*"), // e.g. $foo
+    ANNOTATION_USE(""),
+    MACRO_USE(""),
+    MACRO_VARIABLE("^\\$[A-Za-z_]\\w*"),
     MACRO_EXPR("expression"),
     MACRO_IDENT("identifier"),
 
-    //Others
+    // **Important** for $(
+    MACRO_REPEAT_OPEN("\\$\\("),
+
     ARROW("->"),
     ERROR("error"),
     IDENTIFIER("^[A-Za-z_]\\w*"),
 
-    //Literals
+    // Literals
     TRUE("true"),
     FALSE("false"),
     INT_LITERAL("^(?:0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[1-9][0-9_]*|0)"),
@@ -175,7 +134,6 @@ public enum TokenType
     END("[]"),
     INVALID("[]"),
     COMMENT("[]");
-
 
     public final String regex;
 

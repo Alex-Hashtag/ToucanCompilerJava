@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-
 public class TokenStream implements Iterable<Token>
 {
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
@@ -68,12 +67,9 @@ public class TokenStream implements Iterable<Token>
     {
         // (Unchanged keywords)
         String[] keywords = {
-//                "void", "int8", "int16", "int32", "int64", "int128",
-//                "uint8", "uint16", "uint32", "uint64", "uint128",
-//                "float16", "float32", "float64", "float80", "float128",
-//                "bool", "char", "rune", "string", "type", "var", "lambda",
+                // "void", "int8", ... etc. commented out as per your existing code
                 "mutable", "const", "static", "this", "constructor",
-                "if", "else", "class", "while", "do", "for", //"namespace",
+                "if", "else", "class", "while", "do", "for",
                 "loop", "switch", "null", "continue", "template",
                 "yield", "struct", "implement", "implements", "public",
                 "private", "protected", "implicit", "extends", "super",
@@ -108,9 +104,6 @@ public class TokenStream implements Iterable<Token>
         this.source = input;
         this.tokens = tokens;
     }
-
-
-
 
     public TokenStream(Path filePath, String input)
     {
@@ -427,8 +420,7 @@ public class TokenStream implements Iterable<Token>
                 String charText = input.substring(startIndex, index);
 
                 // Check if it's more than one character (heuristic)
-                // e.g.  'abc'
-                if (charText.length() > 4) // naive length check
+                if (charText.length() > 4)
                 {
                     tokens.add(Token.stored(startRow, startColumn, INVALID, charText));
                     errorManager.reportError(new TokenizationErrorManager.TokenizationError(
@@ -465,6 +457,15 @@ public class TokenStream implements Iterable<Token>
                 }
                 String combined = "@" + annotationName;
                 tokens.add(Token.stored(startRow, startColumn, ANNOTATION_USE, combined));
+                continue;
+            }
+
+            // ** Detect '$(' first => MACRO_REPEAT_OPEN **
+            if (input.startsWith("$(", index)) {
+                int startColumn = column;
+                tokens.add(Token.basic(row, startColumn, MACRO_REPEAT_OPEN));
+                index += 2; // skip '$('
+                column += 2;
                 continue;
             }
 
