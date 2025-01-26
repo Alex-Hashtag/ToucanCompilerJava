@@ -3,9 +3,12 @@ package org.alex_hashtag.internal_representation.macros;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.util.Locatable;
 import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenization.TokenStream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 
 
 public class Macro implements Locatable
@@ -25,7 +28,7 @@ public class Macro implements Locatable
     static class Arm
     {
         Pattern pattern;
-        MacroScope codeSnippets;
+        TokenStream codeSnippets;
     }
 
     public static class Pattern
@@ -36,7 +39,6 @@ public class Macro implements Locatable
         {
             this.elements = elements;
         }
-
 
         /**
          * An enum to represent the repetition type:

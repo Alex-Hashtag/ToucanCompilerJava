@@ -50,7 +50,7 @@ public class TokenizationErrorManager
         final String ANSI_YELLOW = "\u001B[33m";
 
         // Show file name in the error line
-        out.println(ANSI_BOLD + ANSI_RED + "error [" + fileName + "]: " + ANSI_RESET + error.getMessage());
+        out.println(ANSI_BOLD + ANSI_RED + "error [" + fileName + "]: " + ANSI_RESET + '\n' + error.getMessage());
         out.printf("  --> line %d:%d%n", error.getLine(), error.getColumn());
 
         if (error.getLine() > 0 && error.getLine() <= sourceLines.size())

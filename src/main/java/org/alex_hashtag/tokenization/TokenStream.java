@@ -68,10 +68,10 @@ public class TokenStream implements Iterable<Token>
     {
         // (Unchanged keywords)
         String[] keywords = {
-                "void", "int8", "int16", "int32", "int64", "int128",
-                "uint8", "uint16", "uint32", "uint64", "uint128",
-                "float16", "float32", "float64", "float80", "float128",
-                "bool", "char", "rune", "string", "type", "var", "lambda",
+//                "void", "int8", "int16", "int32", "int64", "int128",
+//                "uint8", "uint16", "uint32", "uint64", "uint128",
+//                "float16", "float32", "float64", "float80", "float128",
+//                "bool", "char", "rune", "string", "type", "var", "lambda",
                 "mutable", "const", "static", "this", "constructor",
                 "if", "else", "class", "namespace", "while", "do", "for",
                 "loop", "switch", "null", "continue", "template",
