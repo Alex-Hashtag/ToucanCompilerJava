@@ -144,7 +144,7 @@ public enum TokenType
     //Packages
     PACKAGE("package"),
     IMPORT("import"),
-    NAMESPACE("namespace"),
+//    NAMESPACE("namespace"),
 
     //Macros
     MACRO("macro"),       // existing macro keyword

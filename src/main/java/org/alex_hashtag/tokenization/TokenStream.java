@@ -73,7 +73,7 @@ public class TokenStream implements Iterable<Token>
 //                "float16", "float32", "float64", "float80", "float128",
 //                "bool", "char", "rune", "string", "type", "var", "lambda",
                 "mutable", "const", "static", "this", "constructor",
-                "if", "else", "class", "namespace", "while", "do", "for",
+                "if", "else", "class", "while", "do", "for", //"namespace",
                 "loop", "switch", "null", "continue", "template",
                 "yield", "struct", "implement", "implements", "public",
                 "private", "protected", "implicit", "extends", "super",
@@ -90,18 +90,34 @@ public class TokenStream implements Iterable<Token>
     }
 
     // Token collection, etc.
-    public final LinkedList<Token> tokens = new LinkedList<>();
+    public final List<Token> tokens;
     // Reference to our manager
-    private final TokenizationErrorManager errorManager;
+    private TokenizationErrorManager errorManager;
     @Getter
-    private List<ImportDeclaration> imports = new ArrayList<>();
+    private List<ImportDeclaration> imports;
     @Getter
     private String packageName = null;
+    @Getter
+    private String filename;
+    @Getter
+    private String source;
+
+    public TokenStream(String filename, String input, List<Token> tokens)
+    {
+        this.filename = filename;
+        this.source = input;
+        this.tokens = tokens;
+    }
+
+
 
 
     public TokenStream(Path filePath, String input)
     {
+        this.filename = String.valueOf(filePath.getFileName());
+        this.source = input;
         this.imports = new ArrayList<>();
+        this.tokens = new LinkedList<>();
 
         // 1) Initialize the error manager with the file path and file contents
         this.errorManager = new TokenizationErrorManager(
@@ -163,7 +179,6 @@ public class TokenStream implements Iterable<Token>
             );
         }
 
-        // If there are errors, print them in Rust style and exit
         if (errorManager.hasErrors())
         {
             errorManager.printErrors(System.err);

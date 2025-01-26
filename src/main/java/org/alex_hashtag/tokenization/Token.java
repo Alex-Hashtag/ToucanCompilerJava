@@ -58,4 +58,47 @@ public class Token
 
         return new Token(new Coordinates(row, column), INVALID, sequence);
     }
+
+    public String describeContents() {
+        return switch (type) {
+            case IDENTIFIER -> "identifier '" + internal.orElse("") + "'";
+            case INT_LITERAL, FLOAT_LITERAL, CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL ->
+                    type.name().toLowerCase().replace("_literal", "") + " literal '" + internal.orElse("") + "'";
+            case COMMENT -> "comment";
+            case SEMI_COLON, COLON, DOT, COMMA, BRACE_OPEN, BRACE_CLOSED, BRACKET_OPEN, BRACKET_CLOSED, CURLY_OPEN, CURLY_CLOSED,
+                 ARROW_OPEN, ARROW_CLOSED, ASSIGNMENT, ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, MODULO, LOGICAL_AND, LOGICAL_OR,
+                 LOGICAL_NOT, EQUALITY, INEQUALITY, GREATER_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL, BIT_SHIFT_LEFT,
+                 BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED, BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT, BIT_SHIFT_LEFT_EQUALS,
+                 BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS, ADDITION_ASSIGN, SUBTRACTION_ASSIGN, MULTIPLICATION_ASSIGN,
+                 DIVISION_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN, BITWISE_XOR_ASSIGN, INCREMENT, DECREMENT, DOUBLE_COLON ->
+                    "operator '" + type.name().toLowerCase().replace("_", " ") + "'";
+            case TRUE, FALSE -> "boolean literal '" + type.name().toLowerCase() + "'";
+            case VAR, IF, ELSE, WHILE, DO, FOR, LOOP, SWITCH, CONTINUE, BREAK, YIELD, RETURN, INLINE, ECHO, STRUCT, TYPEDEF, ENUM, TRAIT,
+                 IMPLEMENT, TEMPLATE, OPERATIONS, CLASS, CONSTRUCTOR, IMPLICIT, EXTENDS, IMPLEMENTS, THIS, SUPER, ABSTRACT, NULL, PUBLIC,
+                 PRIVATE, PROTECTED, SYS, TYPEOF, SIZEOF, UNSAFE, PACKAGE, IMPORT, MACRO, ANNOTATION ->
+                    "keyword '" + type.name().toLowerCase() + "'";
+            default -> "special character or unknown token";
+        };
+    }
+
+    @Override
+    public String toString() {
+        return switch (type) {
+            case IDENTIFIER -> "identifier '" + internal.orElse("") + "'";
+            case INT_LITERAL, FLOAT_LITERAL, CHAR_LITERAL, RUNE_LITERAL, STRING_LITERAL ->
+                    internal.orElse("") + "'";
+            case SEMI_COLON, COLON, DOT, COMMA, BRACE_OPEN, BRACE_CLOSED, BRACKET_OPEN, BRACKET_CLOSED, CURLY_OPEN, CURLY_CLOSED,
+                 ARROW_OPEN, ARROW_CLOSED, ASSIGNMENT, ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, MODULO, LOGICAL_AND, LOGICAL_OR,
+                 LOGICAL_NOT, EQUALITY, INEQUALITY, GREATER_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL, BIT_SHIFT_LEFT,
+                 BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED, BITWISE_AND, BITWISE_OR, BITWISE_XOR, BITWISE_NOT, BIT_SHIFT_LEFT_EQUALS,
+                 BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS, ADDITION_ASSIGN, SUBTRACTION_ASSIGN, MULTIPLICATION_ASSIGN,
+                 DIVISION_ASSIGN, MODULO_ASSIGN, BITWISE_AND_ASSIGN, BITWISE_OR_ASSIGN, BITWISE_XOR_ASSIGN, INCREMENT, DECREMENT, DOUBLE_COLON ->
+                    " " + type.name().toLowerCase().replace("_", " ") + " ";
+            case TRUE, FALSE, VAR, IF, ELSE, WHILE, DO, FOR, LOOP, SWITCH, CONTINUE, BREAK, YIELD, RETURN, INLINE, ECHO,
+                 STRUCT, TYPEDEF, ENUM, TRAIT, IMPLEMENT, TEMPLATE, OPERATIONS, CLASS, CONSTRUCTOR, IMPLICIT, EXTENDS,
+                 IMPLEMENTS, THIS, SUPER, ABSTRACT, NULL, PUBLIC, PRIVATE, PROTECTED, SYS, TYPEOF, SIZEOF, UNSAFE,
+                 PACKAGE, IMPORT, MACRO, ANNOTATION -> type.name().toLowerCase();
+            default -> internal.orElse("");
+        };
+    }
 }

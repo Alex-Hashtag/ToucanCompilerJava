@@ -3,6 +3,7 @@ package org.alex_hashtag.internal_representation.macros;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.util.Locatable;
 import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenization.Token;
 import org.alex_hashtag.tokenization.TokenStream;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Macro implements Locatable
     Coordinates location;
     String name;
     List<Arm> arms;
+    boolean pub;
 
     public Macro(Coordinates location, String name)
     {
@@ -25,11 +27,16 @@ public class Macro implements Locatable
         this.arms = new ArrayList<>();
     }
 
-    static class Arm
+    public void addArm(Pattern pattern, TokenStream codeSnippets)
     {
-        Pattern pattern;
-        TokenStream codeSnippets;
+        this.arms.add(new Arm(pattern, codeSnippets));
     }
+
+    public record Arm
+            (
+        Pattern pattern,
+        TokenStream codeSnippets
+            ){}
 
     public static class Pattern
     {
@@ -53,18 +60,18 @@ public class Macro implements Locatable
             ZERO_OR_ONE
         }
 
-        enum MacroVarType
+        public enum MacroVarType
         {
             EXPRESSION,
             TYPE,
             IDENTIFIER
         }
 
-        static abstract class PatternElement
+        public static abstract class PatternElement
         {
         }
 
-        static class LiteralElement extends PatternElement
+        public static class LiteralElement extends PatternElement
         {
             private final String token;
 
@@ -79,7 +86,7 @@ public class Macro implements Locatable
             }
         }
 
-        static class VariableElement extends PatternElement
+        public static class VariableElement extends PatternElement
         {
             private final String name;
             private final MacroVarType type;

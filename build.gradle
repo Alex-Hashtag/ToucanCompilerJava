@@ -33,13 +33,13 @@ java {
 
 // Add this block to specify the main class
 application {
-    mainClass = 'org.alex_hashtag.Main'
+    mainClass = 'org.alex_hashtag.command.Main'
 }
 
 graalvmNative {
     binaries {
         main {                        // First binary
-            mainClass = 'org.alex_hashtag.Main'
+            mainClass = 'org.alex_hashtag.command.Main'
             imageName = 'rainforest'
             buildArgs.add('--no-fallback')
         }

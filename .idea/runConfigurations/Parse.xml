@@ -2,7 +2,7 @@
   <configuration default="false" name="Parse" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="graalvm-21" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-    <option name="MAIN_CLASS_NAME" value="org.alex_hashtag.Main" />
+    <option name="MAIN_CLASS_NAME" value="org.alex_hashtag.command.Main" />
     <module name="Rainforest.main" />
     <option name="PROGRAM_PARAMETERS" value="parse test_project" />
     <method v="2">
