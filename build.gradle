@@ -45,3 +45,12 @@ graalvmNative {
         }
     }
 }
+
+tasks.named('nativeCompile') {
+    doLast {
+        copy {
+            from "$projectDir/build/native/nativeCompile/rainforest.exe"
+            into "$projectDir/test_project"
+        }
+    }
+}
