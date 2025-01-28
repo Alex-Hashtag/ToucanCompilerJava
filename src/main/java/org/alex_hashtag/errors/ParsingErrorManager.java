@@ -130,13 +130,13 @@ public class ParsingErrorManager
         private final String token;
         private final String hint;
 
-        private ParsingError(ErrorType type,
-                             String message,
-                             int line,
-                             int column,
-                             String token,
-                             String hint,
-                             String... args)
+        public ParsingError(ErrorType type,
+                            String message,
+                            int line,
+                            int column,
+                            String token,
+                            String hint,
+                            String... args)
         {
             this.type = type;
             this.message = String.format(message, args);

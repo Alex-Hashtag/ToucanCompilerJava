@@ -4,6 +4,7 @@ import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotation;
 import org.alex_hashtag.internal_representation.macros.Macro;
 import org.alex_hashtag.internal_representation.macros.MacroParser;
+import org.alex_hashtag.internal_representation.types.Field;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.tokenization.TokenStream;
 
@@ -18,6 +19,7 @@ public class AbstractSyntaxTree
     private final List<Annotation> annotations = new ArrayList<>();
     private final List<Type> types = new ArrayList<>();
     private final List<Function> functions = new ArrayList<>();
+    private final List<Field> fields = new ArrayList<>();
 
     public AbstractSyntaxTree(List<TokenStream> tokenStreams)
     {

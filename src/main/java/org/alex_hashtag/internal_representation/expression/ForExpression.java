@@ -14,7 +14,7 @@ public class ForExpression implements Expression
     @Getter
     Coordinates location;
     List<Expression> initialisations;
-    BinaryExpression condition;
+    Expression condition;
     List<Expression> updates;
     List<Expression> statements;
 

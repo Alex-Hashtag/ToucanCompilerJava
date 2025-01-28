@@ -13,7 +13,9 @@ import java.util.List;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
-public class MacroParser {
+
+public class MacroParser
+{
 
     // -- A small buffer for single-token "peeking" logic --
     private Token storedPeek = null;
@@ -23,34 +25,42 @@ public class MacroParser {
      * Public entry point. Parses all macros from the given list of TokenStreams,
      * returning a combined List of macros.
      */
-    public List<Macro> parseAllMacros(List<TokenStream> tokenStreams) {
+    public List<Macro> parseAllMacros(List<TokenStream> tokenStreams)
+    {
         List<Macro> allMacros = new ArrayList<>();
-        for (TokenStream stream : tokenStreams) {
+        for (TokenStream stream : tokenStreams)
+        {
             ParsingErrorManager errorManager = new ParsingErrorManager(stream.getFilename(), stream.getSource());
             Iterator<Token> iterator = stream.iterator();
 
             boolean isPublic = false; // Flag to track if the next macro is public
 
-            while (iterator.hasNext()) {
+            while (iterator.hasNext())
+            {
                 Token current = iterator.next();
 
-                if (current.type == PUBLIC) {
+                if (current.type == PUBLIC)
+                {
                     isPublic = true;
                     continue;
                 }
 
                 // Look for the 'macro' keyword
-                if (current.type == MACRO) {
+                if (current.type == MACRO)
+                {
                     parseSingleMacro(iterator, current, errorManager, stream, isPublic, allMacros);
                     isPublic = false; // Reset after processing
-                } else {
+                }
+                else
+                {
                     // If we saw something else, reset the "public" flag
                     isPublic = false;
                 }
             }
 
             // Print all collected errors for this file (if any)
-            if (errorManager.hasErrors()) {
+            if (errorManager.hasErrors())
+            {
                 errorManager.printErrors(System.out);
             }
         }
@@ -65,15 +75,18 @@ public class MacroParser {
                                   ParsingErrorManager errorManager,
                                   TokenStream stream,
                                   boolean isPublic,
-                                  List<Macro> resultList) {
+                                  List<Macro> resultList)
+    {
         Coordinates macroCoords = macroKeyword.coordinates;
 
         // Skip any intervening comments
         Token current = consumeNonComment(iterator);
 
         // Next token must be IDENTIFIER (the macro name)
-        if (current == null || current.type != IDENTIFIER) {
-            if (current != null) {
+        if (current == null || current.type != IDENTIFIER)
+        {
+            if (current != null)
+            {
                 errorManager.reportError(
                         ParsingError.withHint(
                                 ErrorType.EXPECTED_FOUND,
@@ -92,7 +105,8 @@ public class MacroParser {
 
         String macroName = stream.getPackageName() + "." + current.internal.orElse("macroName");
         current = consumeNonComment(iterator);
-        if (current == null || current.type != CURLY_OPEN) {
+        if (current == null || current.type != CURLY_OPEN)
+        {
             if (current != null)
                 errorManager.reportError(
                         ParsingError.withHint(
@@ -125,9 +139,11 @@ public class MacroParser {
     private void parseMacroArms(Iterator<Token> iterator,
                                 ParsingErrorManager errorManager,
                                 Macro macro,
-                                TokenStream stream) {
+                                TokenStream stream)
+    {
 
-        while (true) {
+        while (true)
+        {
             Token next = consumeNonComment(iterator);
             if (next == null) // End of file, no more arms
                 break;
@@ -135,7 +151,8 @@ public class MacroParser {
                 break;
 
             // We expect '(' to start an arm
-            if (next.type != BRACE_OPEN) { // Assuming BRACE_OPEN is '('
+            if (next.type != BRACE_OPEN)
+            { // Assuming BRACE_OPEN is '('
                 errorManager.reportError(
                         ParsingError.withHint(
                                 ErrorType.EXPECTED_FOUND,
@@ -159,7 +176,8 @@ public class MacroParser {
             // Next token must be '->'
             Token arrow = consumeNonComment(iterator);
 
-            if (arrow == null || arrow.type != ARROW) {
+            if (arrow == null || arrow.type != ARROW)
+            {
                 if (arrow != null)
                     errorManager.reportError(
                             ParsingError.withHint(
@@ -180,7 +198,8 @@ public class MacroParser {
 
             // Next token must be '{' for the body
             Token openBody = consumeNonComment(iterator);
-            if (openBody == null || openBody.type != CURLY_OPEN) {
+            if (openBody == null || openBody.type != CURLY_OPEN)
+            {
                 if (openBody != null)
                     errorManager.reportError(
                             ParsingError.withHint(
@@ -216,29 +235,35 @@ public class MacroParser {
      */
     private Macro.Pattern parseMacroPattern(Iterator<Token> iterator,
                                             ParsingErrorManager errorManager,
-                                            TokenStream stream) {
+                                            TokenStream stream)
+    {
         List<Macro.Pattern.PatternElement> elements = new ArrayList<>();
         int parenLevel = 1;
 
-        while (iterator.hasNext() && parenLevel > 0) {
+        while (iterator.hasNext() && parenLevel > 0)
+        {
             Token current = iterator.next();
             if (current.type == COMMENT) // Skip comments
                 continue;
-            else if (current.type == BRACE_OPEN) { // '('
+            else if (current.type == BRACE_OPEN)
+            { // '('
                 parenLevel++;
                 elements.add(new Macro.Pattern.LiteralElement("("));
             }
-            else if (current.type == BRACE_CLOSED) { // ')'
+            else if (current.type == BRACE_CLOSED)
+            { // ')'
                 parenLevel--;
                 if (parenLevel == 0)
                     break;
                 elements.add(new Macro.Pattern.LiteralElement(")"));
             }
-            else if (current.type == COMMA) { // Just a separator
+            else if (current.type == COMMA)
+            { // Just a separator
                 elements.add(new Macro.Pattern.LiteralElement(","));
                 continue;
             }
-            else if (current.type == MACRO_REPEAT_OPEN) { // '$('
+            else if (current.type == MACRO_REPEAT_OPEN)
+            { // '$('
                 // Detected `$(`
                 Macro.Pattern subPat = parseSubPatternInsideRepetition(iterator, errorManager);
 
@@ -247,12 +272,15 @@ public class MacroParser {
                 Macro.Pattern.RepetitionKind repKind = Macro.Pattern.RepetitionKind.ZERO_OR_MORE;
 
                 Token nextToken = peekNextNonComment(iterator);
-                if (nextToken != null) {
-                    if (nextToken.type == QUESTION) { // Optional
+                if (nextToken != null)
+                {
+                    if (nextToken.type == QUESTION)
+                    { // Optional
                         repKind = Macro.Pattern.RepetitionKind.ZERO_OR_ONE;
                         consumeNonComment(iterator); // Consume '?'
                     }
-                    else if (nextToken.type == ADDITION) { // One or more
+                    else if (nextToken.type == ADDITION)
+                    { // One or more
                         repKind = Macro.Pattern.RepetitionKind.ONE_OR_MORE;
                         consumeNonComment(iterator); // Consume '+'
                     }
@@ -267,12 +295,15 @@ public class MacroParser {
                         new Macro.Pattern.RepetitionElement(subPat, repKind, separator);
                 elements.add(repElem);
             }
-            else if (isMacroTypeKeyword(current)) {
+            else if (isMacroTypeKeyword(current))
+            {
                 // Handle typed macro variables like 'expression', 'type', 'identifier'
                 Macro.Pattern.MacroVarType varType = convertToMacroVarType(current);
                 Token varToken = consumeNonComment(iterator);
-                if (varToken == null || varToken.type != MACRO_VARIABLE) {
-                    if (varToken != null) {
+                if (varToken == null || varToken.type != MACRO_VARIABLE)
+                {
+                    if (varToken != null)
+                    {
                         errorManager.reportError(
                                 ParsingError.withHint(
                                         ErrorType.EXPECTED_FOUND,
@@ -291,13 +322,15 @@ public class MacroParser {
                 String varName = varToken.internal.orElse("$");
                 elements.add(new Macro.Pattern.VariableElement(varName, varType));
             }
-            else if (current.type == MACRO_VARIABLE) {
+            else if (current.type == MACRO_VARIABLE)
+            {
                 // Untyped macro variable, defaulting to EXPRESSION
                 String varName = current.internal.orElse("$");
                 elements.add(new Macro.Pattern.VariableElement(
                         varName, Macro.Pattern.MacroVarType.EXPRESSION));
             }
-            else { // Treat as literal
+            else
+            { // Treat as literal
                 elements.add(new Macro.Pattern.LiteralElement(
                         current.internal.orElse(current.toString())));
             }
@@ -314,34 +347,42 @@ public class MacroParser {
      * We stop on the first unmatched ')' or when level goes to 0.
      */
     private Macro.Pattern parseSubPatternInsideRepetition(Iterator<Token> iterator,
-                                                          ParsingErrorManager errorManager) {
+                                                          ParsingErrorManager errorManager)
+    {
         List<Macro.Pattern.PatternElement> subElements = new ArrayList<>();
         int level = 1; // Already inside '$('
 
-        while (iterator.hasNext() && level > 0) {
+        while (iterator.hasNext() && level > 0)
+        {
             Token current = iterator.next();
             if (current.type == COMMENT) // Skip comments
                 continue;
-            else if (current.type == BRACE_OPEN) { // '('
+            else if (current.type == BRACE_OPEN)
+            { // '('
                 level++;
                 subElements.add(new Macro.Pattern.LiteralElement("("));
             }
-            else if (current.type == BRACE_CLOSED) { // ')'
+            else if (current.type == BRACE_CLOSED)
+            { // ')'
                 level--;
                 if (level == 0)
                     break;
                 subElements.add(new Macro.Pattern.LiteralElement(")"));
             }
-            else if (current.type == COMMA) {
+            else if (current.type == COMMA)
+            {
                 subElements.add(new Macro.Pattern.LiteralElement(","));
                 continue;
             }
-            else if (isMacroTypeKeyword(current)) {
+            else if (isMacroTypeKeyword(current))
+            {
                 // Handle typed macro variables
                 Macro.Pattern.MacroVarType varType = convertToMacroVarType(current);
                 Token varToken = consumeNonComment(iterator);
-                if (varToken == null || varToken.type != MACRO_VARIABLE) {
-                    if (varToken != null) {
+                if (varToken == null || varToken.type != MACRO_VARIABLE)
+                {
+                    if (varToken != null)
+                    {
                         errorManager.reportError(
                                 ParsingError.withHint(
                                         ErrorType.EXPECTED_FOUND,
@@ -360,13 +401,15 @@ public class MacroParser {
                 String varName = varToken.internal.orElse("$");
                 subElements.add(new Macro.Pattern.VariableElement(varName, varType));
             }
-            else if (current.type == MACRO_VARIABLE) {
+            else if (current.type == MACRO_VARIABLE)
+            {
                 // Untyped macro variable, defaulting to EXPRESSION
                 String varName = current.internal.orElse("$");
                 subElements.add(new Macro.Pattern.VariableElement(
                         varName, Macro.Pattern.MacroVarType.EXPRESSION));
             }
-            else { // Treat as literal
+            else
+            { // Treat as literal
                 subElements.add(new Macro.Pattern.LiteralElement(
                         current.internal.orElse(current.toString())));
             }
@@ -379,20 +422,27 @@ public class MacroParser {
      * Parse a `{ ... }` block and return all tokens inside.
      * If nested braces are encountered, handle them so we only stop at the matching brace.
      */
-    private List<Token> parseBlock(Iterator<Token> iterator) {
+    private List<Token> parseBlock(Iterator<Token> iterator)
+    {
         List<Token> blockTokens = new ArrayList<>();
         int braceCount = 1; // We already consumed one '{'
 
-        while (iterator.hasNext() && braceCount > 0) {
+        while (iterator.hasNext() && braceCount > 0)
+        {
             Token t = iterator.next();
-            if (t.type == CURLY_OPEN) {
+            if (t.type == CURLY_OPEN)
+            {
                 braceCount++;
                 blockTokens.add(t);
-            } else if (t.type == CURLY_CLOSED) {
+            }
+            else if (t.type == CURLY_CLOSED)
+            {
                 braceCount--;
                 if (braceCount > 0)
                     blockTokens.add(t);
-            } else {
+            }
+            else
+            {
                 blockTokens.add(t);
             }
         }
@@ -402,8 +452,10 @@ public class MacroParser {
     /**
      * Helper to skip over comments and return the next real token, or null.
      */
-    private Token consumeNonComment(Iterator<Token> iterator) {
-        while (iterator.hasNext()) {
+    private Token consumeNonComment(Iterator<Token> iterator)
+    {
+        while (iterator.hasNext())
+        {
             Token t = consumePeekIfAny(iterator);
             if (t == null)
                 return null;
@@ -417,14 +469,17 @@ public class MacroParser {
      * A minimal "peek" approach to see the next non-comment token
      * without consuming it from the iterator.
      */
-    private Token peekNextNonComment(Iterator<Token> iterator) {
+    private Token peekNextNonComment(Iterator<Token> iterator)
+    {
         if (!iterator.hasNext())
             return null;
         Token t = consumePeekIfAny(iterator);
-        while (t != null && t.type == COMMENT && iterator.hasNext()) {
+        while (t != null && t.type == COMMENT && iterator.hasNext())
+        {
             t = consumePeekIfAny(iterator);
         }
-        if (t != null && t.type != COMMENT) {
+        if (t != null && t.type != COMMENT)
+        {
             // Re-store it for future consumption
             storedPeek = t;
             hasPeek = true;
@@ -435,8 +490,10 @@ public class MacroParser {
     /**
      * Consumes the peeked token if any; otherwise, consumes from the iterator.
      */
-    private Token consumePeekIfAny(Iterator<Token> iterator) {
-        if (hasPeek) {
+    private Token consumePeekIfAny(Iterator<Token> iterator)
+    {
+        if (hasPeek)
+        {
             hasPeek = false;
             return storedPeek;
         }
@@ -446,9 +503,11 @@ public class MacroParser {
     /**
      * Converts a macro "type keyword" like "expression" to the relevant enum.
      */
-    private Macro.Pattern.MacroVarType convertToMacroVarType(Token t) {
+    private Macro.Pattern.MacroVarType convertToMacroVarType(Token t)
+    {
         String s = t.internal.orElse("");
-        return switch (s) {
+        return switch (s)
+        {
             case "expression" -> Macro.Pattern.MacroVarType.EXPRESSION;
             case "type" -> Macro.Pattern.MacroVarType.TYPE;
             case "identifier" -> Macro.Pattern.MacroVarType.IDENTIFIER;
@@ -459,7 +518,8 @@ public class MacroParser {
     /**
      * Checks if a token is a macro type keyword.
      */
-    private boolean isMacroTypeKeyword(Token t) {
+    private boolean isMacroTypeKeyword(Token t)
+    {
         if (t.internal.isEmpty())
             return false;
         String val = t.internal.get();

@@ -662,20 +662,23 @@ public class TokenStream implements Iterable<Token>
      *
      * @return A formatted string of all tokens.
      */
-    public String getTokensAsString() {
+    public String getTokensAsString()
+    {
         StringBuilder sb = new StringBuilder();
 
         // Define headers
-        String[] headers = { "Type", "Content", "Row", "Column" };
+        String[] headers = {"Type", "Content", "Row", "Column"};
         int[] columnWidths = new int[headers.length];
 
         // Initialize column widths based on headers
-        for (int i = 0; i < headers.length; i++) {
+        for (int i = 0; i < headers.length; i++)
+        {
             columnWidths[i] = headers[i].length();
         }
 
         // Calculate maximum width for each column based on token data
-        for (Token token : tokens) {
+        for (Token token : tokens)
+        {
             columnWidths[0] = Math.max(columnWidths[0], token.type.toString().length());
             String content = token.internal.orElse("");
             columnWidths[1] = Math.max(columnWidths[1], content.length());
@@ -691,7 +694,8 @@ public class TokenStream implements Iterable<Token>
 
         // Append headers
         sb.append("    ");
-        for (int i = 0; i < headers.length; i++) {
+        for (int i = 0; i < headers.length; i++)
+        {
             sb.append(String.format("%-" + columnWidths[i] + "s", headers[i]));
             if (i < headers.length - 1) sb.append(" | ");
         }
@@ -699,14 +703,16 @@ public class TokenStream implements Iterable<Token>
 
         // Append a separator line
         sb.append("    ");
-        for (int i = 0; i < headers.length; i++) {
+        for (int i = 0; i < headers.length; i++)
+        {
             sb.append("-".repeat(columnWidths[i]));
             if (i < headers.length - 1) sb.append("-+-");
         }
         sb.append("\n");
 
         // Append each token's data
-        for (Token token : tokens) {
+        for (Token token : tokens)
+        {
             String type = token.type.toString();
             String content = token.internal.orElse("");
             String rowStr = String.valueOf(token.coordinates.row());
@@ -722,17 +728,22 @@ public class TokenStream implements Iterable<Token>
      * Overrides the default toString method to provide a detailed string representation of the TokenStream.
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append("TokenStream {\n");
         sb.append("  Filename: ").append(filename).append("\n");
         sb.append("  Package Name: ").append(packageName != null ? packageName : "N/A").append("\n");
         sb.append("  Imports:\n");
-        if (imports != null && !imports.isEmpty()) {
-            for (ImportDeclaration imp : imports) {
+        if (imports != null && !imports.isEmpty())
+        {
+            for (ImportDeclaration imp : imports)
+            {
                 sb.append("    - ").append(imp).append("\n");
             }
-        } else {
+        }
+        else
+        {
             sb.append("    N/A\n");
         }
         sb.append("  Tokens:\n");

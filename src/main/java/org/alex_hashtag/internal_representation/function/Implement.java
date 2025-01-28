@@ -7,11 +7,12 @@ import org.alex_hashtag.tokenization.Coordinates;
 import java.util.List;
 
 
+@Getter
 public class Implement implements Locatable
 {
-    @Getter
     Coordinates location;
     String trait;
     String type;
     List<Function> methods;
+    boolean isPublic;
 }

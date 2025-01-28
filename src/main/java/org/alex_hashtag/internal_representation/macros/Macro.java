@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 public class Macro implements Locatable
 {
-    @Getter
-    private Coordinates location;
     private final String name;
     private final ArrayList<Arm> arms;
     private final boolean pub;
+    @Getter
+    private Coordinates location;
 
     /**
      * Constructor accepting the 'pub' flag.
