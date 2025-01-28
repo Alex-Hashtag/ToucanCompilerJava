@@ -19,4 +19,10 @@ public class YieldExpression implements Expression
     {
         return TypeRegistry.searchByName("void");
     }
+
+    @Override
+    public String toString()
+    {
+        return "yield " + yieldThis;
+    }
 }

@@ -1,48 +1,14 @@
-package org.alex_hashtag.command.Main;
+package com.example;
 
-macro repeat_hello
+public macro buildGreeting
 {
-    (expression $count) -> {
-        loop ($count)
-            println!("Hello, world!");
-    }
-}
-
-macro mathOperation
-{
-    // Add two numbers
-    (add, expression $x, expression $y) -> {
-        println!($x + " + " + $y + " = " + ($x + $y) );
-    }
-
-    // Subtract two numbers
-    (subtract, expression $x, expression $y) -> {
-        println!($x + " + " + $y + " = " + ($x + $y) );
-    }
-}
-
-macro createClass
-{
-//    (identifier $name, type $T identifier $field = expression $expr) -> {
-        class $name {
-            public $T $field = $expr;
-
-            public constructor new($T $field)
-            {
-                this.$field = $field;
-            }
+    ($(expression $name)?) -> {
+        {
+            mutable &string greeting = "Hello";
+            $(
+                &greeting = greeting + ", " + $name + "!";
+            )?
+            yield greeting;
         }
-    }
-}
-
-macro sum
-{
-    // Match when a single expression is provided
-    (expression $x) -> {
-        yield $x;
-    }
-    // Match when two or more expressions are provided
-    (expression $x, $(expression $rest),+) -> {
-        $x + sum!($($rest),+)
     }
 }

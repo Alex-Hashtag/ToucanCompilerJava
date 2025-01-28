@@ -4,5 +4,16 @@ public enum Mutability
 {
     MUTABLE,
     IMMUTABLE,
-    CONST,
+    CONST;
+
+    @Override
+    public String toString()
+    {
+        return switch (this)
+        {
+            case MUTABLE -> "mutable ";
+            case IMMUTABLE -> "";
+            case CONST -> "const ";
+        };
+    }
 }

@@ -21,4 +21,10 @@ public class VariableAssignmentExpression implements Expression
     {
         return TypeRegistry.searchByName(type);
     }
+
+    @Override
+    public String toString()
+    {
+        return identifier + " = " + assignment;
+    }
 }

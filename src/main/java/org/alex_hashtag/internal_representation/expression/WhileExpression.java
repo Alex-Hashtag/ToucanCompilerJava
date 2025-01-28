@@ -14,12 +14,36 @@ public class WhileExpression implements Expression
 
     @Getter
     Coordinates location;
-    BooleanExpression condition;
+    BinaryExpression condition;
     List<Expression> statements;
+
+    boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
 
     @Override
     public Optional<Type> getType()
     {
         return TypeRegistry.searchByName("void");
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("while (");
+        sb.append(condition);
+        sb.append(")");
+
+        if (brackets)
+            sb.append("{\n");
+        for (Expression statement : statements)
+        {
+            sb.append(statement.toString());
+            sb.append(";"); // Add a semicolon to the end of each statement
+        }
+        if (brackets)
+            sb.append("\n}");
+
+        return sb.toString();
     }
 }

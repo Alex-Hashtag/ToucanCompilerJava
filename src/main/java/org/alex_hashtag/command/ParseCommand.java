@@ -50,6 +50,12 @@ public class ParseCommand implements Callable<Integer>
     )
     private boolean verbose;
 
+    @CommandLine.Option(
+            names = {"-o", "--output-file"},
+            description = "Specify a file to write the parsed output (AST). If not specified, output is printed to the console."
+    )
+    private Path outputFile;
+
     @Override
     public Integer call()
     {
@@ -57,15 +63,16 @@ public class ParseCommand implements Callable<Integer>
 
         try
         {
-
-            // 3) Gather .toucan files
+            // 1) Gather .toucan files
             List<Path> toucanFiles = new ArrayList<>();
             for (Path path : paths)
             {
-
                 path = path.toAbsolutePath().normalize();
-                System.out.println(path.toString());
-                Rainforest rainforest = new Rainforest(path.toString()+"\\rainforest.toml");
+                if (verbose)
+                {
+                    System.out.println("Processing path: " + path);
+                }
+                Rainforest rainforest = new Rainforest(path + "\\rainforest.toml");
                 if (Files.isDirectory(path))
                 {
                     try (Stream<Path> fileStream = recursive ? Files.walk(path) : Files.list(path))
@@ -80,7 +87,7 @@ public class ParseCommand implements Callable<Integer>
                 }
             }
 
-            // 4) If dry-run, just list the files found
+            // 2) If dry-run, list files and return
             if (dryRun)
             {
                 System.out.println("Files to parse (dry-run):");
@@ -88,57 +95,46 @@ public class ParseCommand implements Callable<Integer>
                 return 0;
             }
 
-            // 5) If no files found, inform user and return
+            // 3) If no files found, inform the user and return
             if (toucanFiles.isEmpty())
             {
                 System.out.println("No .toucan files found to parse in the specified paths.");
                 return 0;
             }
 
-            // 6) If an output file is specified, write tokens there; otherwise print to console
-//            if (outputFile != null)
-//            {
-//                try (BufferedWriter writer = Files.newBufferedWriter(outputFile))
-//                {
-//                    for (Path file : toucanFiles)
-//                    {
-//                        if (verbose)
-//                        {
-//                            System.out.println("---- Tokenizing file: " + file);
-//                        }
-//                        String source = Files.readString(file);
-//
-//                        // The TokenStream internally manages errors and will exit if any
-//                        TokenStream ts = new TokenStream(file, source);
-//
-//                        // If we reach here, no errors => we write tokens to the file
-//                        writer.write("---- Tokenizing file: " + file + "\n");
-//                        writer.write(ts.getTokensAsString());
-//                        writer.write("\n");
-//                    }
-//                }
-//            }
-
-            else
+            // 4) Parse files
+            for (Path file : toucanFiles)
             {
-                // Print tokens to console
-                for (Path file : toucanFiles)
+                if (verbose)
                 {
-                    if (verbose)
-                    {
-                        System.out.println("---- Parsing file: " + file);
-                    }
-                    String source = Files.readString(file);
-
-                    // TokenStream creation & error check
-                    tokenStreams.add(new TokenStream(file, source));
-
+                    System.out.println("---- Parsing file: " + file);
                 }
+                String source = Files.readString(file);
+
+                // Create TokenStream
+                TokenStream ts = new TokenStream(file, source);
+                tokenStreams.add(ts);
             }
 
+            // 5) Create AST from token streams
             AbstractSyntaxTree ast = new AbstractSyntaxTree(tokenStreams);
 
-            // 7) If we processed everything without immediate errors, success
+            // 6) Write output to file or console
+            if (outputFile != null)
+            {
+                try (BufferedWriter writer = Files.newBufferedWriter(outputFile))
+                {
+                    writer.write(ast.toString());
+                }
+                System.out.printf("Parsing complete. Output written to '%s'.\n", outputFile);
+            }
+            else
+            {
+                System.out.println("Parsing complete. Parsed output:");
+                System.out.println(ast);
+            }
+
+            // 7) Success message
             System.out.printf("Parsing complete. %d files parsed.\n", toucanFiles.size());
             return 0;
 

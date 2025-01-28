@@ -29,4 +29,10 @@ public class VariableDeclarationExpression implements Expression
     {
         return TypeRegistry.searchByName("void");
     }
+
+    @Override
+    public String toString()
+    {
+        return mutability + type + " " + identifier;
+    }
 }

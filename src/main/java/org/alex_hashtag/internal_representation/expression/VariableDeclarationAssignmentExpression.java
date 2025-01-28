@@ -21,6 +21,12 @@ public class VariableDeclarationAssignmentExpression implements Expression
     @Override
     public Optional<Type> getType()
     {
-        return TypeRegistry.searchByName("void");
+        return TypeRegistry.searchByName(type);
+    }
+
+    @Override
+    public String toString()
+    {
+        return mutability + type + " " + identifier + " = " + assignment;
     }
 }

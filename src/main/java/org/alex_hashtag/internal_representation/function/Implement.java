@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.function;
 
 import lombok.Getter;
-import org.alex_hashtag.internal_representation.util.Locatable;
+import org.alex_hashtag.internal_representation.utils.Locatable;
 import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.List;

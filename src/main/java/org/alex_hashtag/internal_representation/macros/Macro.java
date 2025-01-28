@@ -1,30 +1,36 @@
 package org.alex_hashtag.internal_representation.macros;
 
 import lombok.Getter;
-import org.alex_hashtag.internal_representation.util.Locatable;
+import org.alex_hashtag.internal_representation.utils.Locatable;
 import org.alex_hashtag.tokenization.Coordinates;
-import org.alex_hashtag.tokenization.Token;
 import org.alex_hashtag.tokenization.TokenStream;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
+import java.util.stream.Collectors;
 
 
 public class Macro implements Locatable
 {
     @Getter
-    Coordinates location;
-    String name;
-    List<Arm> arms;
-    boolean pub;
+    private Coordinates location;
+    private final String name;
+    private final ArrayList<Arm> arms;
+    private final boolean pub;
 
-    public Macro(Coordinates location, String name)
+    /**
+     * Constructor accepting the 'pub' flag.
+     *
+     * @param location Coordinates where the macro is defined.
+     * @param name     Name of the macro.
+     * @param pub      Indicates if the macro is public.
+     */
+    public Macro(Coordinates location, String name, boolean pub)
     {
         this.location = location;
         this.name = name;
         this.arms = new ArrayList<>();
+        this.pub = pub;
     }
 
     public void addArm(Pattern pattern, TokenStream codeSnippets)
@@ -32,12 +38,50 @@ public class Macro implements Locatable
         this.arms.add(new Arm(pattern, codeSnippets));
     }
 
-    public record Arm
-            (
-        Pattern pattern,
-        TokenStream codeSnippets
-            ){}
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("  Macro {\n")
+                .append("    Name: '").append(name).append("',\n")
+                .append("    Location: ").append(location).append(",\n")
+                .append("    Public: ").append(pub).append(",\n")
+                .append("    Arms: [\n");
 
+
+        for (int i = 0; i < arms.size(); i++)
+        {
+            sb.append(arms.get(i).toString());
+            if (i < arms.size() - 1)
+            {
+                sb.append(",");
+            }
+            sb.append("\n");
+        }
+
+        sb.append("    ]\n")
+                .append("  }");
+        return sb.toString();
+    }
+
+    /**
+     * Represents an arm of the macro, consisting of a pattern and corresponding code snippets.
+     */
+    public record Arm(Pattern pattern, TokenStream codeSnippets)
+    {
+        @Override
+        public String toString()
+        {
+            return "    Arm {\n" +
+                    "      Pattern: " + pattern + ",\n" +
+                    "      CodeSnippets: " + codeSnippets + "\n" +
+                    "    }";
+        }
+    }
+
+    /**
+     * Represents a pattern used in the macro, consisting of multiple pattern elements.
+     */
     public static class Pattern
     {
         private final List<PatternElement> elements;
@@ -47,17 +91,25 @@ public class Macro implements Locatable
             this.elements = elements;
         }
 
-        /**
-         * An enum to represent the repetition type:
-         * - ZERO_OR_MORE => `*`
-         * - ONE_OR_MORE  => `+`
-         * - ZERO_OR_ONE  => `?`
-         */
+        public List<PatternElement> getElements()
+        {
+            return elements;
+        }
+
+        @Override
+        public String toString()
+        {
+            String elementsStr = elements.stream()
+                    .map(PatternElement::toString)
+                    .collect(Collectors.joining(", "));
+            return "Pattern [ " + elementsStr + " ]";
+        }
+
         public enum RepetitionKind
         {
-            ZERO_OR_MORE,
-            ONE_OR_MORE,
-            ZERO_OR_ONE
+            ZERO_OR_MORE, // *
+            ONE_OR_MORE,  // +
+            ZERO_OR_ONE   // ?
         }
 
         public enum MacroVarType
@@ -67,10 +119,18 @@ public class Macro implements Locatable
             IDENTIFIER
         }
 
+        /**
+         * Abstract base class for different types of pattern elements.
+         */
         public static abstract class PatternElement
         {
+            @Override
+            public abstract String toString();
         }
 
+        /**
+         * Represents a literal element in the pattern.
+         */
         public static class LiteralElement extends PatternElement
         {
             private final String token;
@@ -84,8 +144,17 @@ public class Macro implements Locatable
             {
                 return token;
             }
+
+            @Override
+            public String toString()
+            {
+                return "Literal('" + token + "')";
+            }
         }
 
+        /**
+         * Represents a variable element in the pattern.
+         */
         public static class VariableElement extends PatternElement
         {
             private final String name;
@@ -106,14 +175,23 @@ public class Macro implements Locatable
             {
                 return type;
             }
+
+            @Override
+            public String toString()
+            {
+                return "Variable(name='" + name + "', type=" + type + ")";
+            }
         }
 
+        /**
+         * Represents a repetition element in the pattern.
+         */
         @Getter
         public static class RepetitionElement extends PatternElement
         {
-            private final Pattern subPattern;        // The pattern inside $( ... )
-            private final RepetitionKind repetition; // ZERO_OR_MORE (*), ONE_OR_MORE (+), or ZERO_OR_ONE (?)
-            private final String separator;          // e.g. "," or ";" or null if none
+            private final Pattern subPattern;
+            private final RepetitionKind repetition;
+            private final String separator;
 
             public RepetitionElement(Pattern subPattern, RepetitionKind repetition, String separator)
             {
@@ -122,7 +200,12 @@ public class Macro implements Locatable
                 this.separator = separator;
             }
 
+            @Override
+            public String toString()
+            {
+                String sep = separator != null ? ", separator='" + separator + "'" : "";
+                return "Repetition(" + repetition + sep + ", SubPattern=" + subPattern + ")";
+            }
         }
     }
-
 }

@@ -19,4 +19,10 @@ public class ReturnExpression implements Expression
     {
         return TypeRegistry.searchByName("void");
     }
+
+    @Override
+    public String toString()
+    {
+        return "return " + returnThis;
+    }
 }

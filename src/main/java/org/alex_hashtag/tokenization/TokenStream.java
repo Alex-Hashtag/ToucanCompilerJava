@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
+
 public class TokenStream implements Iterable<Token>
 {
     private static final Map<String, TokenType> multiCharOperatorMap = new LinkedHashMap<>();
@@ -21,7 +22,7 @@ public class TokenStream implements Iterable<Token>
 
     static
     {
-        // (Unchanged multi-char operators)
+        // Initialize multi-character operators
         for (TokenType type : List.of(
                 BIT_SHIFT_LEFT_EQUALS, BIT_SHIFT_RIGHT_EQUALS, BIT_SHIFT_RIGHT_UNSIGNED_EQUALS,
                 BIT_SHIFT_LEFT, BIT_SHIFT_RIGHT, BIT_SHIFT_RIGHT_UNSIGNED,
@@ -37,7 +38,7 @@ public class TokenStream implements Iterable<Token>
 
     static
     {
-        // (Unchanged single-char tokens)
+        // Initialize single-character tokens
         singleCharTokenMap.put(";", SEMI_COLON);
         singleCharTokenMap.put(":", COLON);
         singleCharTokenMap.put(".", DOT);
@@ -61,13 +62,13 @@ public class TokenStream implements Iterable<Token>
         singleCharTokenMap.put("^", BITWISE_XOR);
         singleCharTokenMap.put("~", BITWISE_NOT);
         singleCharTokenMap.put("!", LOGICAL_NOT);
+        singleCharTokenMap.put("?", QUESTION);
     }
 
     static
     {
-        // (Unchanged keywords)
+        // Initialize keywords
         String[] keywords = {
-                // "void", "int8", ... etc. commented out as per your existing code
                 "mutable", "const", "static", "this", "constructor",
                 "if", "else", "class", "while", "do", "for",
                 "loop", "switch", "null", "continue", "template",
@@ -98,6 +99,9 @@ public class TokenStream implements Iterable<Token>
     @Getter
     private String source;
 
+    /**
+     * Constructor used when creating a TokenStream from existing tokens.
+     */
     public TokenStream(String filename, String input, List<Token> tokens)
     {
         this.filename = filename;
@@ -105,14 +109,17 @@ public class TokenStream implements Iterable<Token>
         this.tokens = tokens;
     }
 
+    /**
+     * Constructor that tokenizes the input string.
+     */
     public TokenStream(Path filePath, String input)
     {
-        this.filename = String.valueOf(filePath.getFileName());
+        this.filename = filePath.toString();
         this.source = input;
         this.imports = new ArrayList<>();
         this.tokens = new LinkedList<>();
 
-        // 1) Initialize the error manager with the file path and file contents
+        // Initialize the error manager with the file path and file contents
         this.errorManager = new TokenizationErrorManager(
                 filePath.toAbsolutePath().toString(),  // full file path
                 input                            // entire text for line-by-line references
@@ -461,7 +468,8 @@ public class TokenStream implements Iterable<Token>
             }
 
             // ** Detect '$(' first => MACRO_REPEAT_OPEN **
-            if (input.startsWith("$(", index)) {
+            if (input.startsWith("$(", index))
+            {
                 int startColumn = column;
                 tokens.add(Token.basic(row, startColumn, MACRO_REPEAT_OPEN));
                 index += 2; // skip '$('
@@ -547,7 +555,8 @@ public class TokenStream implements Iterable<Token>
                     break;
                 }
             }
-            if (matchedOperator) continue;
+            if (matchedOperator)
+                continue;
 
             // Check for macro variables: $foo
             if (currentChar == '$')
@@ -647,38 +656,88 @@ public class TokenStream implements Iterable<Token>
         tokens.add(Token.getEnd()); // END token
     }
 
-    // For debugging
-    public void printTokens()
-    {
-        System.out.println("Package: " + packageName);
-        System.out.println("Imports:");
-        for (ImportDeclaration imp : imports)
-        {
-            System.out.println("  - " + imp);
+    /**
+     * Provides a string representation of all tokens.
+     * Useful for writing tokens to an output file.
+     *
+     * @return A formatted string of all tokens.
+     */
+    public String getTokensAsString() {
+        StringBuilder sb = new StringBuilder();
+
+        // Define headers
+        String[] headers = { "Type", "Content", "Row", "Column" };
+        int[] columnWidths = new int[headers.length];
+
+        // Initialize column widths based on headers
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length();
         }
-        System.out.println("\nTokens:");
-        for (Token token : tokens)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Type: ").append(token.type);
-            token.internal.ifPresent(s -> sb.append(", Content: ").append(s));
-            sb.append(", Row: ").append(token.coordinates.row());
-            sb.append(", Column: ").append(token.coordinates.column());
-            System.out.println(sb);
+
+        // Calculate maximum width for each column based on token data
+        for (Token token : tokens) {
+            columnWidths[0] = Math.max(columnWidths[0], token.type.toString().length());
+            String content = token.internal.orElse("");
+            columnWidths[1] = Math.max(columnWidths[1], content.length());
+            String rowStr = String.valueOf(token.coordinates.row());
+            columnWidths[2] = Math.max(columnWidths[2], rowStr.length());
+            String colStr = String.valueOf(token.coordinates.column());
+            columnWidths[3] = Math.max(columnWidths[3], colStr.length());
         }
+
+        // Define a format string for the table rows
+        String format = String.format("    %%-%ds | %%-%ds | %%-%ds | %%-%ds\n",
+                columnWidths[0], columnWidths[1], columnWidths[2], columnWidths[3]);
+
+        // Append headers
+        sb.append("    ");
+        for (int i = 0; i < headers.length; i++) {
+            sb.append(String.format("%-" + columnWidths[i] + "s", headers[i]));
+            if (i < headers.length - 1) sb.append(" | ");
+        }
+        sb.append("\n");
+
+        // Append a separator line
+        sb.append("    ");
+        for (int i = 0; i < headers.length; i++) {
+            sb.append("-".repeat(columnWidths[i]));
+            if (i < headers.length - 1) sb.append("-+-");
+        }
+        sb.append("\n");
+
+        // Append each token's data
+        for (Token token : tokens) {
+            String type = token.type.toString();
+            String content = token.internal.orElse("");
+            String rowStr = String.valueOf(token.coordinates.row());
+            String colStr = String.valueOf(token.coordinates.column());
+
+            sb.append(String.format(format, type, content, rowStr, colStr));
+        }
+
+        return sb.toString();
     }
 
-    public String getTokensAsString()
-    {
+    /**
+     * Overrides the default toString method to provide a detailed string representation of the TokenStream.
+     */
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Token token : tokens)
-        {
-            sb.append("Type: ").append(token.type);
-            token.internal.ifPresent(content -> sb.append(", Content: ").append(content));
-            sb.append(", Row: ").append(token.coordinates.row());
-            sb.append(", Column: ").append(token.coordinates.column());
-            sb.append("\n");
+        sb.append("TokenStream {\n");
+        sb.append("  Filename: ").append(filename).append("\n");
+        sb.append("  Package Name: ").append(packageName != null ? packageName : "N/A").append("\n");
+        sb.append("  Imports:\n");
+        if (imports != null && !imports.isEmpty()) {
+            for (ImportDeclaration imp : imports) {
+                sb.append("    - ").append(imp).append("\n");
+            }
+        } else {
+            sb.append("    N/A\n");
         }
+        sb.append("  Tokens:\n");
+        sb.append(getTokensAsString());
+        sb.append("}");
         return sb.toString();
     }
 

@@ -21,4 +21,10 @@ public class LiteralExpression implements Expression
     {
         return TypeRegistry.searchByName(type);
     }
+
+    @Override
+    public String toString()
+    {
+        return literal.toString();
+    }
 }

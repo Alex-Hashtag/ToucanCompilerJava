@@ -17,9 +17,30 @@ public class ForEachExpression implements Expression
     Expression list;
     List<Expression> statements;
 
+
+    boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
+
     @Override
     public Optional<Type> getType()
     {
         return TypeRegistry.searchByName("void");
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("for (").append(element).append(" : ").append(list).append(")");
+        if (brackets)
+            sb.append("{\n");
+        for (Expression statement : statements)
+        {
+            sb.append("    ").append(statement.toString());
+            sb.append(";"); // Add a semicolon to the end of each statement
+            sb.append("\n");
+        }
+        if (brackets)
+            sb.append("}\n");
+        return sb.toString();
     }
 }

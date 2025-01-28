@@ -19,4 +19,10 @@ public class TypeOfExpression implements Expression
     {
         return TypeRegistry.searchByName("type");
     }
+
+    @Override
+    public String toString()
+    {
+        return "typeof " + expr;
+    }
 }

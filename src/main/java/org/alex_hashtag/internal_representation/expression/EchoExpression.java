@@ -19,4 +19,10 @@ public class EchoExpression implements Expression
     {
         return TypeRegistry.searchByName("void");
     }
+
+    @Override
+    public String toString()
+    {
+        return "echo " + expr.toString();
+    }
 }

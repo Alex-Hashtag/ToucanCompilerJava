@@ -70,8 +70,8 @@ public class TokenizeCommand implements Callable<Integer>
             {
 
                 path = path.toAbsolutePath().normalize();
-                System.out.println(path.toString());
-                Rainforest rainforest = new Rainforest(path.toString()+"\\rainforest.toml");
+                System.out.println(path);
+                Rainforest rainforest = new Rainforest(path + "\\rainforest.toml");
                 if (Files.isDirectory(path))
                 {
                     try (Stream<Path> fileStream = recursive ? Files.walk(path) : Files.list(path))
@@ -139,7 +139,7 @@ public class TokenizeCommand implements Callable<Integer>
                     TokenStream ts = new TokenStream(file, source);
 
                     // If no errors, print tokens
-                    ts.printTokens();
+                    System.out.println(ts);
                 }
             }
 

@@ -21,4 +21,21 @@ public class LoopOfExpression implements Expression
     {
         return TypeRegistry.searchByName("void");
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("loop (");
+        sb.append(numberOfIterations);
+        sb.append(")");
+        sb.append("\n{\n");
+        for (Expression statement : statements)
+        {
+            sb.append(statement.toString());
+            sb.append(";\n");
+        }
+        sb.append("}\n");
+        return sb.toString();
+    }
 }

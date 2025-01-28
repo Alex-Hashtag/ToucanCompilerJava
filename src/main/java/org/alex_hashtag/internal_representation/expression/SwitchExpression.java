@@ -24,9 +24,31 @@ public class SwitchExpression implements Expression
         return TypeRegistry.searchByName(type);
     }
 
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("switch (");
+        sb.append(compaterTo);
+        sb.append(")\n{\n");
+        for (Arm arm : arms)
+        {
+            sb.append(arm);
+            sb.append("\n");
+        }
+        sb.append("}\n");
+        return sb.toString();
+    }
+
     public static class Arm
     {
         Expression pattern;
         Expression expression;
+
+        @Override
+        public String toString()
+        {
+            return "case " + pattern + " -> " + expression;
+        }
     }
 }

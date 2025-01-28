@@ -19,4 +19,10 @@ public class SizeOfExpression implements Expression
     {
         return TypeRegistry.searchByName("usize");
     }
+
+    @Override
+    public String toString()
+    {
+        return "sizeof " + type;
+    }
 }

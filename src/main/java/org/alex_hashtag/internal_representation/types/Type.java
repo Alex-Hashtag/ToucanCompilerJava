@@ -1,6 +1,6 @@
 package org.alex_hashtag.internal_representation.types;
 
-import org.alex_hashtag.internal_representation.util.Locatable;
+import org.alex_hashtag.internal_representation.utils.Locatable;
 
 import java.util.List;
 

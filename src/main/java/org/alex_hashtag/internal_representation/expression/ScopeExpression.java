@@ -22,4 +22,18 @@ public class ScopeExpression implements Expression
     {
         return TypeRegistry.searchByName(type);
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        for (Expression expression : expressions)
+        {
+            sb.append(expression.toString());
+            sb.append(";\n");
+        }
+        sb.append("}");
+        return sb.toString();
+    }
 }

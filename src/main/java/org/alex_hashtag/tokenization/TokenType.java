@@ -24,6 +24,7 @@ public enum TokenType
     MULTIPLICATION("\\*"),
     DIVISION("/"),
     MODULO("%"),
+    QUESTION("?"),
 
     // LOGICAL
     LOGICAL_AND("and"),
