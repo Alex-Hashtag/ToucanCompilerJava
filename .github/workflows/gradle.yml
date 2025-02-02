@@ -44,7 +44,7 @@ jobs:
 
     # Step 6: Build native image using GraalVM Native Image
     - name: Build Native Image
-      run: ./gradlew nativeImage
+      run: ./gradlew nativeCompile
 
     # Step 7: Upload the artifact (optional)
     - name: Upload Native Image
