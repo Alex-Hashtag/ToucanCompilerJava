@@ -14,10 +14,18 @@ public class WhileExpression implements Expression
 
     @Getter
     Coordinates location;
-    BinaryExpression condition;
+    Expression condition;
     List<Expression> statements;
 
     boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
+
+    public WhileExpression(Expression condition, List<Expression> statements, Coordinates location, boolean brackets)
+    {
+        this.brackets = brackets;
+        this.condition = condition;
+        this.location = location;
+        this.statements = statements;
+    }
 
     @Override
     public Optional<Type> getType()

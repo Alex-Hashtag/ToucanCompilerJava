@@ -467,7 +467,7 @@ public class TokenStream implements Iterable<Token>
                 continue;
             }
 
-            // ** Detect '$(' first => MACRO_REPEAT_OPEN **
+            // ** Detect '$(' left => MACRO_REPEAT_OPEN **
             if (input.startsWith("$(", index))
             {
                 int startColumn = column;

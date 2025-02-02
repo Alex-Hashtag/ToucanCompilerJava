@@ -15,10 +15,18 @@ public class DoWhileExpression implements Expression
     @Getter
     Coordinates location;
     List<Expression> statements;
-    BinaryExpression condition;
+    Expression condition;
 
 
     boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
+
+    public DoWhileExpression(Expression condition, List<Expression> statements, Coordinates location, boolean brackets)
+    {
+        this.brackets = brackets;
+        this.condition = condition;
+        this.location = location;
+        this.statements = statements;
+    }
 
     @Override
     public Optional<Type> getType()

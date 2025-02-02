@@ -1,14 +1,23 @@
 package com.example;
 
-public macro buildGreeting
+struct Person
 {
-    ($(expression $name)?) -> {
-        {
-            mutable &string greeting = "Hello";
-            $(
-                &greeting = greeting + ", " + $name + "!";
-            )?
-            yield greeting;
-        }
+    string name = nullString!(64);
+    uint8 age = 0;
+    uint8[10] social_security_number = 0;
+}
+
+void main()
+{
+    Person person = Person{
+        .name = "Dave";
+        .social_security_number = int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,}
+    } // age is 0
+
+    mutable Person mutable_person = Person{
+        .name = "Alex";
+        .age = 12;
     }
+
+    mutable_person.age = 18;
 }

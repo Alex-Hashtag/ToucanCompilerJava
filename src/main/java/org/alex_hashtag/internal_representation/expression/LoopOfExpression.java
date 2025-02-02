@@ -16,6 +16,17 @@ public class LoopOfExpression implements Expression
     Expression numberOfIterations;
     List<Expression> statements;
 
+
+    private final boolean brackets;
+
+    public LoopOfExpression(Expression numberOfIterations, List<Expression> statements, Coordinates start, boolean hasBrackets)
+    {
+        this.numberOfIterations = numberOfIterations;
+        this.statements = statements;
+        this.location = start;
+        this.brackets = hasBrackets;
+    }
+
     @Override
     public Optional<Type> getType()
     {

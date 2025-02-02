@@ -15,6 +15,17 @@ public class LoopExpression implements Expression
     Coordinates location;
     List<Expression> statements;
 
+
+    @Getter
+    private boolean brackets;
+
+    public LoopExpression(boolean brackets, Coordinates location, List<Expression> statements)
+    {
+        this.brackets = brackets;
+        this.location = location;
+        this.statements = statements;
+    }
+
     @Override
     public Optional<Type> getType()
     {

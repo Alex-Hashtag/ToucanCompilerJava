@@ -25,6 +25,10 @@ public class FunctionInvokationExpression implements Expression
         return TypeRegistry.searchByName(type);
     }
 
+    public FunctionInvokationExpression(Expression identifier, List<Expression> arguments, Coordinates location, boolean methodInvocation)
+    {
+    }
+
     @Override
     public String toString()
     {

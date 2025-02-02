@@ -8,23 +8,25 @@ import org.alex_hashtag.tokenization.Coordinates;
 import java.util.Optional;
 
 
-public class UnitExpression implements Expression
+@Getter
+public class EmptyExpression implements Expression
 {
-    @Getter
     Coordinates location;
-    String type;
-    @Getter
-    String identifier;
+
+    public EmptyExpression(Coordinates location)
+    {
+        this.location = location;
+    }
 
     @Override
     public Optional<Type> getType()
     {
-        return TypeRegistry.searchByName(type);
+        return TypeRegistry.searchByName("void");
     }
 
     @Override
     public String toString()
     {
-        return identifier;
+        return " ";
     }
 }

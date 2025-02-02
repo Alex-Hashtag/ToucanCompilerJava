@@ -344,7 +344,7 @@ public class MacroParser
 
     /**
      * Parse sub-pattern inside `$( ... )`.
-     * We stop on the first unmatched ')' or when level goes to 0.
+     * We stop on the left unmatched ')' or when level goes to 0.
      */
     private Macro.Pattern parseSubPatternInsideRepetition(Iterator<Token> iterator,
                                                           ParsingErrorManager errorManager)

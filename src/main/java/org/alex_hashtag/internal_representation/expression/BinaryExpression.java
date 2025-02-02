@@ -36,4 +36,12 @@ public class BinaryExpression implements Expression
     {
         return "(" + left.toString() + " " + operator.getOperator() + " " + right.toString() + ")";
     }
+
+    public BinaryExpression(Expression left, Coordinates location, Operator operator, Expression right)
+    {
+        this.left = left;
+        this.location = location;
+        this.operator = operator;
+        this.right = right;
+    }
 }
