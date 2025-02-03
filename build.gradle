@@ -42,6 +42,9 @@ graalvmNative {
             mainClass = 'org.alex_hashtag.command.Main'
             imageName = 'rainforest'
             buildArgs.add('--no-fallback')
+            buildArgs.add('--strict-image-heap')
+            buildArgs.add('-J-Xmx4G')
+            buildArgs.add('-O3')
         }
     }
 }
