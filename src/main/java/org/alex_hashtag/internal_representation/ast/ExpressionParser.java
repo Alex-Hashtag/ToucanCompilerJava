@@ -40,20 +40,20 @@ public class ExpressionParser
                 case WHILE -> parseWhileLoop(iterator, current, errorManager);
                 case DO -> parseDoWhileLoop(iterator, current, errorManager);
                 case LOOP -> parseLoop(iterator, current, errorManager);
-                case BREAK -> parseBreak(iterator, current, errorManager);
-                case CONTINUE -> parseContinue(iterator, current, errorManager);
-                case ECHO -> parseEcho(iterator, current, errorManager);
-                case RETURN -> parseReturn(iterator, current, errorManager);
-                case YIELD -> parseYield(iterator, current, errorManager);
-                case SIZEOF -> parseSizeOf(iterator, current, errorManager);
-                case TYPEOF -> parseTypeOf(iterator, current, errorManager);
+                case BREAK -> new BreakExpression(current.coordinates);
+                case CONTINUE -> new ContinueExpression(current.coordinates);
+                case ECHO -> new EchoExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
+                case RETURN -> new ReturnExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
+                case YIELD -> new YieldExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
+                case SIZEOF -> new SizeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
+                case TYPEOF -> new TypeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
                 case SWITCH -> parseSwitch(iterator, current, errorManager);
                 case BRACE_OPEN -> parseNextExpression(iterator, current, errorManager);
                 case CURLY_OPEN -> parseScope(iterator, current, errorManager);
                 case UNSAFE -> parseUnsafe(iterator, current, errorManager);
                 case INT_LITERAL, FLOAT_LITERAL, CHAR_LITERAL, RUNE_LITERAL , STRING_LITERAL -> parseBasicLiteral(iterator, current, errorManager);
                 case IDENTIFIER -> parseWhateverTheFuckThisMightBe(iterator, current, errorManager);
-                default -> lastExpr = null;
+                default -> null;
             };
 
              closingSymbol = consumeNonComment(iterator);
@@ -85,11 +85,21 @@ public class ExpressionParser
         return null; //!temp to remove an error
     }
 
-    private Expression parseForLoop(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
+    private Expression parseScope(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
     {
-        return null; //!temp to remove an error
-    }
+        Coordinates start = current.coordinates;
+        List<Expression> expressions = new ArrayList<>();
 
+
+        current = consumeNonComment(iterator);
+        while (current.type!=CURLY_CLOSED)
+        {
+            expressions.add(parseNextExpression(iterator, current, errorManager));
+            current = consumeNonComment(iterator);
+        }
+
+        return new ScopeExpression(start, expressions);
+    }
 
     private Token consumeNonComment(Iterator<Token> iterator)
     {

@@ -14,6 +14,12 @@ public class YieldExpression implements Expression
     Coordinates location;
     Expression yieldThis;
 
+    public YieldExpression(Coordinates coordinates, Expression expression)
+    {
+        this.location = coordinates;
+        this.yieldThis = expression;
+    }
+
     @Override
     public Optional<Type> getType()
     {

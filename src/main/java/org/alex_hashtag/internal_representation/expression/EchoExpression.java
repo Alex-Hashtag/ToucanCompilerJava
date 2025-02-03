@@ -14,6 +14,12 @@ public class EchoExpression implements Expression
     Coordinates location;
     Expression expr;
 
+    public EchoExpression(Coordinates coordinates, Expression expression)
+    {
+        this.location = coordinates;
+        this.expr = expression;
+    }
+
     @Override
     public Optional<Type> getType()
     {

@@ -14,6 +14,12 @@ public class ReturnExpression implements Expression
     Coordinates location;
     Expression returnThis;
 
+    public ReturnExpression(Coordinates coordinates, Expression expression)
+    {
+        this.location = coordinates;
+        this.returnThis = expression;
+    }
+
     @Override
     public Optional<Type> getType()
     {
