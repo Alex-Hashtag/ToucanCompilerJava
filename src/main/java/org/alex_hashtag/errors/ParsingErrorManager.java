@@ -130,7 +130,7 @@ public class ParsingErrorManager
         private final String token;
         private final String hint;
 
-        public ParsingError(ErrorType type,
+        private ParsingError(ErrorType type,
                             String message,
                             int line,
                             int column,
@@ -165,11 +165,10 @@ public class ParsingErrorManager
                 int line,
                 int column,
                 String token,
-                String hint,
                 String... args
         )
         {
-            return new ParsingError(type, message, line, column, token, hint, args);
+            return new ParsingError(type, message, line, column, token, null, args);
         }
 
     }

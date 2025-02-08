@@ -29,7 +29,7 @@ public class ExpressionParser
         List<Pair<Expression, Token>> expressions = new ArrayList<>();
         Expression lastExpr= null;
         Token closingSymbol = null;
-        while (closingSymbol == null || (closingSymbol.type != SEMI_COLON && closingSymbol.type != BRACE_CLOSED))
+        while (closingSymbol == null || (closingSymbol.type != SEMI_COLON && closingSymbol.type != BRACE_CLOSED && closingSymbol.type != BRACKET_CLOSED && closingSymbol.type != COMMA))
         {
 
 
@@ -82,7 +82,146 @@ public class ExpressionParser
         }
 
 
-        return null; //!temp to remove an error
+        return result;
+    }
+
+    private Expression parseDoWhileLoop(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
+    {
+        Coordinates start = current.coordinates;
+
+        current = consumeNonComment(iterator);
+
+        boolean brackets = false;
+
+        if (current.type==CURLY_OPEN)
+        {
+            current = consumeNonComment(iterator);
+            brackets = true;
+        }
+
+        List<Expression> statements = new ArrayList<>();
+
+        if (!brackets)
+            statements.add(parseNextExpression(iterator, current, errorManager));
+        else
+        {
+            while (current.type!=CURLY_CLOSED)
+            {
+                statements.add(parseNextExpression(iterator, current, errorManager));
+                current = consumeNonComment(iterator);
+            }
+        }
+
+        current = consumeNonComment(iterator);
+        if (current.type!=WHILE)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            WHILE.regex,
+                            current.describeContents()
+                    )
+            );
+
+        current = consumeNonComment(iterator);
+        if (current.type!=BRACE_OPEN)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_OPEN.regex,
+                            current.describeContents()
+                    )
+            );
+
+        current = consumeNonComment(iterator);
+        Expression condition = parseNextExpression(iterator, current, errorManager);
+
+        current = consumeNonComment(iterator);
+        assert current != null;
+        if (current.type!=BRACE_CLOSED)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_CLOSED.regex,
+                            current.describeContents()
+                    )
+            );
+
+
+
+        return new WhileExpression(condition, statements, start, brackets);
+    }
+
+    private Expression parseWhileLoop(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
+    {
+        Coordinates start = current.coordinates;
+        current = consumeNonComment(iterator);
+        if (current.type!=BRACE_OPEN)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_OPEN.regex,
+                            current.describeContents()
+                    )
+            );
+
+        current = consumeNonComment(iterator);
+        Expression condition = parseNextExpression(iterator, current, errorManager);
+
+        current = consumeNonComment(iterator);
+        assert current != null;
+        if (current.type!=BRACE_CLOSED)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_CLOSED.regex,
+                            current.describeContents()
+                    )
+            );
+
+        current = consumeNonComment(iterator);
+
+        boolean brackets = false;
+
+        if (current.type==CURLY_OPEN)
+        {
+            current = consumeNonComment(iterator);
+            brackets = true;
+        }
+
+        List<Expression> statements = new ArrayList<>();
+
+        if (!brackets)
+            statements.add(parseNextExpression(iterator, current, errorManager));
+        else
+        {
+            while (current.type!=CURLY_CLOSED)
+            {
+                statements.add(parseNextExpression(iterator, current, errorManager));
+                current = consumeNonComment(iterator);
+            }
+        }
+
+        return new WhileExpression(condition, statements, start, brackets);
     }
 
     private Expression parseScope(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
