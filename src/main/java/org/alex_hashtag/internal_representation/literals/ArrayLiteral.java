@@ -1,5 +1,6 @@
 package org.alex_hashtag.internal_representation.literals;
 
+import jdk.jfr.Unsigned;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.Expression;
 import org.alex_hashtag.internal_representation.types.Type;
@@ -12,10 +13,10 @@ import java.util.Optional;
 
 public class ArrayLiteral implements Literal
 {
-
     @Getter
     Coordinates location;
     String type;
+    @Unsigned
     long size;
     List<Expression> entries;
 

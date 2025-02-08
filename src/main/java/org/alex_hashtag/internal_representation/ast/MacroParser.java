@@ -508,7 +508,6 @@ public class MacroParser
         String s = t.internal.orElse("");
         return switch (s)
         {
-            case "expression" -> Macro.Pattern.MacroVarType.EXPRESSION;
             case "type" -> Macro.Pattern.MacroVarType.TYPE;
             case "identifier" -> Macro.Pattern.MacroVarType.IDENTIFIER;
             default -> Macro.Pattern.MacroVarType.EXPRESSION;

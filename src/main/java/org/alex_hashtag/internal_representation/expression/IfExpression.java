@@ -1,6 +1,7 @@
 package org.alex_hashtag.internal_representation.expression;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
 import org.alex_hashtag.tokenization.Coordinates;
@@ -19,7 +20,18 @@ public class IfExpression implements Expression
     IfExpression elseExpression;
 
     boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
+    @Setter
     boolean isElse; // For toString() purposes, doesn't actually affect the behavior of the class
+
+    public IfExpression(Coordinates location, BinaryExpression binaryExpression, List<Expression> statements, IfExpression elseExpr, boolean hasBlock, boolean b)
+    {
+        this.location = location;
+        this.condition = binaryExpression;
+        this.statements = statements;
+        this.elseExpression = elseExpr;
+        this.brackets = hasBlock;
+        this.isElse = b;
+    }
 
     @Override
     public Optional<Type> getType()

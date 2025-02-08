@@ -109,7 +109,8 @@ public class ParsingErrorManager
     @Getter
     public enum ErrorType
     {
-        EXPECTED_FOUND("Expected %s found %s");
+        EXPECTED_FOUND("Expected %s found %s"),
+        SYNTAX_ERROR("%s is not a valid basic literal.");
 
         private final String description;
 

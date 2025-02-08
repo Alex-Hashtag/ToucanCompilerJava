@@ -16,6 +16,12 @@ public class LiteralExpression implements Expression
     String type;
     Literal literal;
 
+    public LiteralExpression(Coordinates location, Literal literal)
+    {
+        this.location = location;
+        this.literal = literal;
+    }
+
     @Override
     public Optional<Type> getType()
     {

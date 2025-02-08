@@ -112,8 +112,8 @@ public enum TokenType
     ANNOTATION_USE(""),
     MACRO_USE(""),
     MACRO_VARIABLE("^\\$[A-Za-z_]\\w*"),
-    MACRO_EXPR("expression"),
-    MACRO_IDENT("identifier"),
+//    MACRO_EXPR("expression"),
+//    MACRO_IDENT("identifier"),
 
     // **Important** for $(
     MACRO_REPEAT_OPEN("\\$\\("),

@@ -605,16 +605,7 @@ public class TokenStream implements Iterable<Token>
                 String word = idMatcher.group();
                 int startColumn = column;
 
-                // Check macro-specific keywords
-                if (word.equals("expression"))
-                {
-                    tokens.add(Token.basic(row, startColumn, MACRO_EXPR));
-                }
-                else if (word.equals("identifier"))
-                {
-                    tokens.add(Token.basic(row, startColumn, MACRO_IDENT));
-                }
-                else if (keywordsSet.contains(word))
+                if (keywordsSet.contains(word))
                 {
                     tokens.add(Token.basic(row, startColumn, keywordMap.get(word)));
                 }

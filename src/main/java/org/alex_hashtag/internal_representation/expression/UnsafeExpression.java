@@ -14,9 +14,16 @@ public class UnsafeExpression implements Expression
     @Getter
     Coordinates location;
     String type;
-    List<Expression> expressions;
+    List<Expression> statements;
 
     boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
+
+    public UnsafeExpression(List<Expression> statements, Coordinates start, boolean brackets)
+    {
+        this.location = start;
+        this.statements = statements;
+        this.brackets = brackets;
+    }
 
 
     @Override
@@ -37,10 +44,10 @@ public class UnsafeExpression implements Expression
         else
             sb.append(" ");
 
-        for (int i = 0; i < expressions.size(); i++)
+        for (int i = 0; i < statements.size(); i++)
         {
-            sb.append(expressions.get(i));
-            if (i < expressions.size() - 1)
+            sb.append(statements.get(i));
+            if (i < statements.size() - 1)
                 sb.append(", ");
         }
 

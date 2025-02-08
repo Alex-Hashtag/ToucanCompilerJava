@@ -1,27 +1,28 @@
 package org.alex_hashtag.internal_representation.literals;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
 import org.alex_hashtag.tokenization.Coordinates;
 
 import java.util.Optional;
 
-
-public class IntegerLiteral implements Literal
-{
-    @Getter
-    Coordinates location;
-    byte sizeInBytes;
-    boolean unsigned;
-    long internal;
+@Getter
+@Setter
+public class IntegerLiteral implements Literal {
+    private Coordinates location;
+    private byte sizeInBytes;
+    private boolean unsigned;
+    private String internal;
 
     @Override
-    public Optional<Type> getType()
-    {
-        StringBuilder type = new StringBuilder("int");
-        if (unsigned) type.insert(0, "u");
-        type.append(sizeInBytes * 8);
-        return TypeRegistry.searchByName(type.toString());
+    public Optional<Type> getType() {
+        StringBuilder typeName = new StringBuilder("int");
+        if (unsigned) {
+            typeName.insert(0, "u");
+        }
+        typeName.append(sizeInBytes * 8);
+        return TypeRegistry.searchByName(typeName.toString());
     }
 }
