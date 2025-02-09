@@ -15,7 +15,7 @@ public class FunctionInvokationExpression implements Expression
     Coordinates location;
     String type;
     Expression identifier;
-    List<Expression> arguments;
+    AccessChainExpression arguments;
 
     boolean methodInvocation; // For toString() purposes, doesn't actually affect the behavior of the class
 
@@ -25,7 +25,7 @@ public class FunctionInvokationExpression implements Expression
         return TypeRegistry.searchByName(type);
     }
 
-    public FunctionInvokationExpression(Expression identifier, List<Expression> arguments, Coordinates location, boolean methodInvocation)
+    public FunctionInvokationExpression(Expression identifier, AccessChainExpression arguments, Coordinates location, boolean methodInvocation)
     {
     }
 
@@ -35,11 +35,11 @@ public class FunctionInvokationExpression implements Expression
         StringBuilder sb = new StringBuilder();
         if (methodInvocation)
         {
-            sb.append(arguments.getFirst());
+            sb.append(arguments.getSegments().getFirst());
             sb.append(".");
             sb.append(identifier);
             sb.append("(");
-            arguments.stream().skip(1).forEach(arg -> sb.append(arg).append(", "));
+            arguments.getSegments().stream().skip(1).forEach(arg -> sb.append(arg).append(", "));
             sb.delete(sb.length() - 2, sb.length());
             sb.append(")");
         }
@@ -47,8 +47,8 @@ public class FunctionInvokationExpression implements Expression
         {
             sb.append(identifier);
             sb.append("(");
-            arguments.forEach(arg -> sb.append(arg).append(", "));
-            if (!arguments.isEmpty())
+            arguments.getSegments().forEach(arg -> sb.append(arg).append(", "));
+            if (!arguments.getSegments().isEmpty())
                 sb.delete(sb.length() - 2, sb.length());
             sb.append(")");
         }

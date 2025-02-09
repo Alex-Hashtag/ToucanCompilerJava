@@ -18,6 +18,13 @@ public class SwitchExpression implements Expression
     Expression compaterTo;
     List<Arm> arms;
 
+    public SwitchExpression(Coordinates location, Expression compaterTo, List<Arm> arms)
+    {
+        this.location = location;
+        this.compaterTo = compaterTo;
+        this.arms = arms;
+    }
+
     @Override
     public Optional<Type> getType()
     {
@@ -45,10 +52,16 @@ public class SwitchExpression implements Expression
         Expression pattern;
         Expression expression;
 
+        public Arm(Expression pattern, Expression expression)
+        {
+            this.pattern = pattern;
+            this.expression = expression;
+        }
+
         @Override
         public String toString()
         {
-            return "case " + pattern + " -> " + expression;
+            return pattern + " -> " + expression;
         }
     }
 }

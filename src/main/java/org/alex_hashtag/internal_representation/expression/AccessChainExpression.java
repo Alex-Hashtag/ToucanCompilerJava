@@ -14,6 +14,7 @@ public class AccessChainExpression implements Expression
 {
     @Getter
     Coordinates location;
+    @Getter
     List<Expression> segments;
     String type;
 
