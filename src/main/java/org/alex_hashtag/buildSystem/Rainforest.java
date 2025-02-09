@@ -27,10 +27,11 @@ public class Rainforest
     public Rainforest(String path)
     {
         TomlErrorManager errorManager = new TomlErrorManager();
+        Path configFilePath = Paths.get(path, "rainforest.toml");
 
         try
         {
-            Toml config = new Toml().read(Paths.get(path).toFile());
+            Toml config = new Toml().read(configFilePath.toFile());
 
             // Parse [project] section
             if (config.containsTable("project"))

@@ -13,6 +13,7 @@ import org.graalvm.collections.Pair;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import static org.alex_hashtag.tokenization.TokenType.*;
 
@@ -23,33 +24,33 @@ public class ExpressionParser
     private Token storedPeek = null;
     private boolean hasPeek = false;
 
-    public Expression parseNextExpression(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
+    public Expression parseNextExpression(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager, TokenType closer)
     {
         Coordinates start = current.coordinates;
 
         List<Pair<Expression, Token>> expressions = new ArrayList<>();
         Expression lastExpr= null;
         Token closingSymbol = null;
-        while (closingSymbol == null || (closingSymbol.type != SEMI_COLON && closingSymbol.type != BRACE_CLOSED && closingSymbol.type != BRACKET_CLOSED && closingSymbol.type != COMMA))
+        while (current.type!=closer)
         {
 
 
             lastExpr = switch (current.type)
             {
                 case IF -> parseIf(iterator, current, errorManager);
-//                case FOR -> parseForLoop(iterator, current, errorManager);
+                case FOR -> parseForLoop(iterator, current, errorManager);
                 case WHILE -> parseWhileLoop(iterator, current, errorManager);
                 case DO -> parseDoWhileLoop(iterator, current, errorManager);
                 case LOOP -> parseLoop(iterator, current, errorManager);
                 case BREAK -> new BreakExpression(current.coordinates);
                 case CONTINUE -> new ContinueExpression(current.coordinates);
-                case ECHO -> new EchoExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
-                case RETURN -> new ReturnExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
-                case YIELD -> new YieldExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
-                case SIZEOF -> new SizeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
-                case TYPEOF -> new TypeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager));
+                case ECHO -> new EchoExpression(current.coordinates, parseNextExpression(iterator, current, errorManager, closer));
+                case RETURN -> new ReturnExpression(current.coordinates, parseNextExpression(iterator, current, errorManager, closer));
+                case YIELD -> new YieldExpression(current.coordinates, parseNextExpression(iterator, current, errorManager, closer));
+                case SIZEOF -> new SizeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager, closer));
+                case TYPEOF -> new TypeOfExpression(current.coordinates, parseNextExpression(iterator, current, errorManager, closer));
 //                case SWITCH -> parseSwitch(iterator, current, errorManager);
-                case BRACE_OPEN -> parseNextExpression(iterator, current, errorManager);
+                case BRACE_OPEN -> parseNextExpression(iterator, current, errorManager, BRACE_CLOSED);
                 case CURLY_OPEN -> parseScope(iterator, current, errorManager);
                 case UNSAFE -> parseUnsafe(iterator, current, errorManager);
                 case INT_LITERAL, FLOAT_LITERAL, CHAR_LITERAL, RUNE_LITERAL , STRING_LITERAL -> parseBasicLiteral(iterator, current, errorManager);
@@ -57,7 +58,7 @@ public class ExpressionParser
                 default -> null;
             };
 
-             closingSymbol = consumeNonComment(iterator);
+             closingSymbol = peekNextNonComment(iterator);
 
             expressions.add(Pair.create(lastExpr, closingSymbol));
         }
@@ -86,6 +87,64 @@ public class ExpressionParser
         return result;
     }
 
+    private Expression parseForLoop(Iterator<Token> iterator, Token current, ParsingErrorManager errorManager)
+    {
+        Coordinates start = current.coordinates;
+        current = consumeNonComment(iterator);
+        if (current.type!=BRACE_OPEN)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_OPEN.regex,
+                            current.describeContents()
+                    )
+            );
+
+        current = consumeNonComment(iterator);
+        List<Expression> initialization = new ArrayList<>();
+        initialization.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
+        ForExpression.LoopType type = switch ((Objects.requireNonNull(current = consumeNonComment(iterator))).type)
+        {
+            case SEMI_COLON, COMMA -> ForExpression.LoopType.STANDARD;
+            case COLON -> ForExpression.LoopType.FOREACH;
+            default -> {
+                errorManager.reportError(
+                        ParsingErrorManager.ParsingError.of(
+                                ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                                ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                                current.coordinates.row(),
+                                current.coordinates.column(),
+                                current.toString(),
+                                "comma, colon or semicolon",
+                                current.describeContents()
+                        ));
+                yield null;
+            }
+        };
+
+
+
+        current = consumeNonComment(iterator);
+        if (current.type!=BRACE_CLOSED)
+            errorManager.reportError(
+                    ParsingErrorManager.ParsingError.of(
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND,
+                            ParsingErrorManager.ErrorType.EXPECTED_FOUND.getDescription(),
+                            current.coordinates.row(),
+                            current.coordinates.column(),
+                            current.toString(),
+                            BRACE_CLOSED.regex,
+                            current.describeContents()
+                    )
+            );
+
+        return null;
+    }
+
     /**
      * Parses a `loop` expression. The grammar is assumed to allow either:
      *
@@ -108,7 +167,7 @@ public class ExpressionParser
             consumeNonComment(iterator);
             // Parse the iteration count
             Token exprToken = consumeNonComment(iterator);
-            iterationCount = parseNextExpression(iterator, exprToken, errorManager);
+            iterationCount = parseNextExpression(iterator, exprToken, errorManager, BRACE_CLOSED);
 
             // Consume the closing ')'
             Token closingParen = consumeNonComment(iterator);
@@ -141,12 +200,12 @@ public class ExpressionParser
             statements = new ArrayList<>();
             Token bodyToken = consumeNonComment(iterator);
             while (bodyToken.type != CURLY_CLOSED) {
-                statements.add(parseNextExpression(iterator, bodyToken, errorManager));
+                statements.add(parseNextExpression(iterator, bodyToken, errorManager, SEMI_COLON));
                 bodyToken = consumeNonComment(iterator);
             }
         } else {
             // single statement (no curly braces)
-            Expression singleStmt = parseNextExpression(iterator, bodyStart, errorManager);
+            Expression singleStmt = parseNextExpression(iterator, bodyStart, errorManager, SEMI_COLON);
             statements = List.of(singleStmt);
         }
 
@@ -175,12 +234,12 @@ public class ExpressionParser
         List<Expression> statements = new ArrayList<>();
 
         if (!brackets)
-            statements.add(parseNextExpression(iterator, current, errorManager));
+            statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
         else
         {
             while (current.type!=CURLY_CLOSED)
             {
-                statements.add(parseNextExpression(iterator, current, errorManager));
+                statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
                 current = consumeNonComment(iterator);
             }
         }
@@ -205,12 +264,12 @@ public class ExpressionParser
         List<Expression> statements = new ArrayList<>();
 
         if (!brackets)
-            statements.add(parseNextExpression(iterator, current, errorManager));
+            statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
         else
         {
             while (current.type!=CURLY_CLOSED)
             {
-                statements.add(parseNextExpression(iterator, current, errorManager));
+                statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
                 current = consumeNonComment(iterator);
             }
         }
@@ -244,7 +303,7 @@ public class ExpressionParser
             );
 
         current = consumeNonComment(iterator);
-        Expression condition = parseNextExpression(iterator, current, errorManager);
+        Expression condition = parseNextExpression(iterator, current, errorManager, BRACE_CLOSED);
 
         current = consumeNonComment(iterator);
         assert current != null;
@@ -284,7 +343,7 @@ public class ExpressionParser
             );
 
         current = consumeNonComment(iterator);
-        Expression condition = parseNextExpression(iterator, current, errorManager);
+        Expression condition = parseNextExpression(iterator, current, errorManager, BRACE_CLOSED);
 
         current = consumeNonComment(iterator);
         if (current.type!=BRACE_CLOSED)
@@ -313,12 +372,12 @@ public class ExpressionParser
         List<Expression> statements = new ArrayList<>();
 
         if (!brackets)
-            statements.add(parseNextExpression(iterator, current, errorManager));
+            statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
         else
         {
             while (current.type!=CURLY_CLOSED)
             {
-                statements.add(parseNextExpression(iterator, current, errorManager));
+                statements.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
                 current = consumeNonComment(iterator);
             }
         }
@@ -335,7 +394,7 @@ public class ExpressionParser
         current = consumeNonComment(iterator);
         while (current.type!=CURLY_CLOSED)
         {
-            expressions.add(parseNextExpression(iterator, current, errorManager));
+            expressions.add(parseNextExpression(iterator, current, errorManager, SEMI_COLON));
             current = consumeNonComment(iterator);
         }
 
@@ -363,7 +422,7 @@ public class ExpressionParser
         }
 
         // Parse the if-condition
-        Expression condition = parseNextExpression(iterator, consumeNonComment(iterator), errorManager);
+        Expression condition = parseNextExpression(iterator, consumeNonComment(iterator), errorManager, BRACE_CLOSED);
 
         // Consume the closing parenthesis (assumed to be a BRACE_CLOSED token)
         Token closeParen = consumeNonComment(iterator);
@@ -384,7 +443,7 @@ public class ExpressionParser
         boolean hasBlock = (bodyToken.type == CURLY_OPEN);
         List<Expression> statements = hasBlock
                 ? parseBlock(iterator, errorManager)
-                : List.of(parseNextExpression(iterator, bodyToken, errorManager));
+                : List.of(parseNextExpression(iterator, bodyToken, errorManager, SEMI_COLON));
 
         // Check for an else branch.
         IfExpression elseExpr = null;
@@ -403,7 +462,7 @@ public class ExpressionParser
                 boolean elseHasBlock = (elseBody.type == CURLY_OPEN);
                 List<Expression> elseStatements = elseHasBlock
                         ? parseBlock(iterator, errorManager)
-                        : List.of(parseNextExpression(iterator, elseBody, errorManager));
+                        : List.of(parseNextExpression(iterator, elseBody, errorManager, SEMI_COLON));
                 elseExpr = new IfExpression(start, null, elseStatements, null, elseHasBlock, true);
             }
         }
@@ -490,31 +549,12 @@ public class ExpressionParser
         List<Expression> statements = new ArrayList<>();
         Token token = consumeNonComment(iterator);
         while (token.type != CURLY_CLOSED) {
-            statements.add(parseNextExpression(iterator, token, errorManager));
+            statements.add(parseNextExpression(iterator, token, errorManager, SEMI_COLON));
             token = consumeNonComment(iterator);
         }
         return statements;
     }
 
-    /**
-     * A utility that converts a list of tokens into a single expression by creating a local iterator.
-     */
-    private Expression parseTokensAsSingleExpression(List<Token> tokens, ParsingErrorManager errorManager) {
-        Iterator<Token> it = tokens.iterator();
-        return parseNextExpression(it, it.next(), errorManager);
-    }
-
-    /**
-     * A utility that parses multiple expressions from a list of tokens.
-     */
-    private List<Expression> parseTokensAsMultipleExpressions(List<Token> tokens, ParsingErrorManager errorManager) {
-        List<Expression> expressions = new ArrayList<>();
-        Iterator<Token> it = tokens.iterator();
-        while (it.hasNext()) {
-            expressions.add(parseNextExpression(it, it.next(), errorManager));
-        }
-        return expressions;
-    }
 
     /**
      * Splits the given token list by SEMI_COLON tokens up to maxSplits times.

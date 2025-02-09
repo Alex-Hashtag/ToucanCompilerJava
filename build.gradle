@@ -37,6 +37,7 @@ application {
 }
 
 graalvmNative {
+
     binaries {
         main {                        // First binary
             mainClass = 'org.alex_hashtag.command.Main'
@@ -50,9 +51,12 @@ graalvmNative {
 }
 
 tasks.named('nativeCompile') {
+
+
     doLast {
         copy {
-            from "$projectDir/build/native/nativeCompile/rainforest.exe"
+            from "$projectDir/build/native/nativeCompile/"
+            include "rainforest*"
             into "$projectDir/test_project"
         }
     }

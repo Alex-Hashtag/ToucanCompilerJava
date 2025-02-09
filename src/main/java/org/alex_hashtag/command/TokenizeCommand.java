@@ -71,7 +71,7 @@ public class TokenizeCommand implements Callable<Integer>
 
                 path = path.toAbsolutePath().normalize();
                 System.out.println(path);
-                Rainforest rainforest = new Rainforest(path + "\\rainforest.toml");
+                Rainforest rainforest = new Rainforest(path+"");
                 if (Files.isDirectory(path))
                 {
                     try (Stream<Path> fileStream = recursive ? Files.walk(path) : Files.list(path))

@@ -72,7 +72,7 @@ public class ParseCommand implements Callable<Integer>
                 {
                     System.out.println("Processing path: " + path);
                 }
-                Rainforest rainforest = new Rainforest(path + "\\rainforest.toml");
+                Rainforest rainforest = new Rainforest(path + "");
                 if (Files.isDirectory(path))
                 {
                     try (Stream<Path> fileStream = recursive ? Files.walk(path) : Files.list(path))
