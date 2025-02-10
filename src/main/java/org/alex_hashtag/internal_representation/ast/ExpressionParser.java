@@ -3,7 +3,6 @@ package org.alex_hashtag.internal_representation.ast;
 import org.alex_hashtag.errors.ParsingErrorManager;
 import org.alex_hashtag.internal_representation.expression.*;
 import org.alex_hashtag.internal_representation.literals.*;
-import org.alex_hashtag.internal_representation.utils.ListUtils;
 import org.alex_hashtag.tokenization.Coordinates;
 import org.alex_hashtag.tokenization.Token;
 import org.alex_hashtag.tokenization.TokenType;
@@ -39,13 +38,13 @@ public class ExpressionParser
     public Expression parseNextExpression(Iterator<Token> iterator,
                                           Token current,
                                           ParsingErrorManager errorManager,
-                                          TokenType closer)
+                                          TokenType... closer)
     {
         Coordinates start = current.coordinates;
         List<Pair<Expression, Token>> expressions = new ArrayList<>();
 
         // We accumulate expressions until we hit 'closer'
-        while (current.type != closer)
+        while (!isCloser(current.type, closer))
         {
             Expression lastExpr = switch (current.type)
             {
@@ -120,15 +119,10 @@ public class ExpressionParser
             }
             expressions.add(Pair.create(lastExpr, next));
 
-            // If the next token is the closer, we're done; consume it and break.
-            if (next.type == closer)
-            {
-                consumeNonComment(iterator); // consume the closer
-                break;
-            }
 
             // Otherwise, consume the next token so we can continue.
-            current = consumeNonComment(iterator);
+            if (isCloser(current.type, closer))
+                current = consumeNonComment(iterator);
         }
 
         if (expressions.isEmpty())
@@ -136,45 +130,18 @@ public class ExpressionParser
             return new EmptyExpression(start);
         }
 
+
+        /*ѝ
+        * How parsing the list will work:
+        * First resolve all the DOT Tokens, and combine expressions separated by dots into AccessChainExpression
+        * Then resolve
+        *
+        * */
+
+
         // Build the final expression from the collected segments
-        Expression result = expressions.get(0).getLeft(); // The first parsed expression
-        if (expressions.size() == 1)
-        {
-            // Only one expression, so just return it
-            return result;
-        }
+        Expression result = expressions.get(0).getLeft(); // The first parsed expression=
 
-        // If there's more than one, potentially do something with them
-        // (e.g. handle operators, field accesses, etc.)
-        // In your code you have this "flip and trim" approach. We'll keep that logic,
-        // but you can also choose to do a real precedence-based parse if needed.
-        List<Pair<Token, Expression>> flipped = ListUtils.flipAndTrim(expressions);
-        for (Pair<Token, Expression> junction : flipped)
-        {
-            Token opToken = junction.getLeft();
-            Expression rightExpr = junction.getRight();
-
-            // If it's a recognized operator
-            Operator op = Operator.fromToken(opToken);
-            if (op != null)
-            {
-                result = new BinaryExpression(result, start, op, rightExpr);
-            }
-            // Or if it's a field access or function call: e.g. 'someExpr.field'
-            else if (opToken.type == DOT)
-            {
-                if (rightExpr instanceof UnitExpression ue)
-                {
-                    result = new FieldAccessExpression(ue.getIdentifier(), result, start);
-                }
-                else if (rightExpr instanceof FunctionInvokationExpression)
-                {
-                    // handle function call: e.g. result = new FunctionCallExpression(result, args)
-                    // ...
-                }
-            }
-            // Add more specialized logic as needed...
-        }
 
         return result;
     }
@@ -522,6 +489,23 @@ public class ExpressionParser
     /* =========================
        Small Helper Methods
        ========================= */
+
+
+    /**
+     * Checks if the given token type matches any of the closer types.
+     *
+     * @param tokenType the token type to check.
+     * @param closers   one or more token types that are considered closers.
+     * @return true if tokenType is one of the closers, false otherwise.
+     */
+    private boolean isCloser(TokenType tokenType, TokenType... closers) {
+        for (TokenType closer : closers) {
+            if (tokenType == closer) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Consumes tokens until it finds a non-comment one. Returns {@code null} if exhausted.

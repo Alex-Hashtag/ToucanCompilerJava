@@ -23,11 +23,11 @@ public class ForExpression implements Expression {
 
     // Fields for standard for-loop
     @Getter
-    private List<Expression> initialisations;
+    private ArgsListExpression initialisations;
     @Getter
-    private Expression condition;
+    private ArgsListExpression condition;
     @Getter
-    private List<Expression> updates;
+    private ArgsListExpression updates;
 
     // Fields for foreach loop
     @Getter
@@ -42,9 +42,9 @@ public class ForExpression implements Expression {
 
     // Constructor for standard for-loop
     public ForExpression(
-            List<Expression> initialisations,
-            Expression condition,
-            List<Expression> updates,
+            ArgsListExpression initialisations,
+            ArgsListExpression condition,
+            ArgsListExpression updates,
             Coordinates location,
             boolean hasBrackets
     ) {
@@ -80,9 +80,9 @@ public class ForExpression implements Expression {
         StringBuilder sb = new StringBuilder();
         if (type == LoopType.STANDARD) {
             sb.append("for (");
-            for (int i = 0; i < initialisations.size(); i++) {
-                sb.append(initialisations.get(i));
-                if (i < initialisations.size() - 1)
+            for (int i = 0; i < initialisations.getArgs().size(); i++) {
+                sb.append(initialisations.getArgs().get(i));
+                if (i < initialisations.getArgs().size() - 1)
                     sb.append(", ");
             }
 
@@ -92,9 +92,9 @@ public class ForExpression implements Expression {
 
             sb.append("; ");
 
-            for (int i = 0; i < updates.size(); i++) {
-                sb.append(updates.get(i));
-                if (i < updates.size() - 1)
+            for (int i = 0; i < updates.getArgs().size(); i++) {
+                sb.append(updates.getArgs().get(i));
+                if (i < updates.getArgs().size() - 1)
                     sb.append(", ");
             }
         } else if (type == LoopType.FOREACH) {

@@ -14,6 +14,7 @@ public class ArgsListExpression implements Expression
     @Getter
     private Coordinates location;
     private String type;
+    @Getter
     private List<Expression> args;
 
     @Override

@@ -16,11 +16,14 @@ public class FieldAccessExpression implements Expression
     Expression identifier;
     String fieldName;
 
-    public FieldAccessExpression(String fieldName, Expression identifier, Coordinates location)
+    boolean arrayAccess;
+
+    public FieldAccessExpression(String fieldName, Expression identifier, Coordinates location, boolean arrayAccess)
     {
         this.fieldName = fieldName;
         this.identifier = identifier;
         this.location = location;
+        this.arrayAccess = arrayAccess;
     }
 
     @Override
