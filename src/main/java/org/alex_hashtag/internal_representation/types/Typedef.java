@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.types;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
+import org.alex_hashtag.internal_representation.expressionOld.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.macros.Annotation;

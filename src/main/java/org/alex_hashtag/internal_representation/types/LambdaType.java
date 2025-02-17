@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.types;
 
 import lombok.Getter;
-import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
+import org.alex_hashtag.internal_representation.expressionOld.VariableDeclarationExpression;
 import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;

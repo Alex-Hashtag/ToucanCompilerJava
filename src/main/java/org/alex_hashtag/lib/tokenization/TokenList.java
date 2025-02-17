@@ -1,8 +1,5 @@
 package org.alex_hashtag.lib.tokenization;
 
-import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
-import org.alex_hashtag.tokenizationOLD.Token;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -128,7 +125,7 @@ public class TokenList implements Iterable<Token>
 
         // 4) We'll produce tokens in a result list
         List<Token> result = new ArrayList<>();
-        CoordinatesOLD startCoord = new CoordinatesOLD(0, 0);
+        Coordinates startCoord = new Coordinates(0, 0);
         if (hasStart)
         {
             result.add(new Token.Start(startCoord));
@@ -149,7 +146,7 @@ public class TokenList implements Iterable<Token>
                 // If SIGNIFICANT or INDENTATION, produce a NewLine token
                 if (rules.whitespaceMode != WhitespaceMode.IGNORE)
                 {
-                    result.add(new Token.NewLine(new CoordinatesOLD(line, col)));
+                    result.add(new Token.NewLine(new Coordinates(line, col)));
                 }
                 line++;
                 col = 1;
@@ -214,13 +211,13 @@ public class TokenList implements Iterable<Token>
             else
             {
                 // No matches => invalid
-                result.add(new Token.Invalid(new CoordinatesOLD(line, col), String.valueOf(c)));
+                result.add(new Token.Invalid(new Coordinates(line, col), String.valueOf(c)));
                 index++;
                 col++;
             }
         }
 
-        CoordinatesOLD endCoord = new CoordinatesOLD(line, col);
+        Coordinates endCoord = new Coordinates(line, col);
         if (hasEnd)
         {
             result.add(new Token.End(endCoord));
@@ -333,7 +330,7 @@ public class TokenList implements Iterable<Token>
             i++;
             String idx = String.valueOf(i);
             String type = t.getClass().getSimpleName(); // e.g. "Keyword", "Operator"...
-            CoordinatesOLD pos = switch (t)
+            Coordinates pos = switch (t)
             {
                 case Token.Keyword k -> k.position();
                 case Token.Delimiter d -> d.position();
@@ -556,7 +553,7 @@ public class TokenList implements Iterable<Token>
             }
             // success
             return new MatchResult(len,
-                    new Token.Keyword(new CoordinatesOLD(line, col), input.substring(index, index + len)));
+                    new Token.Keyword(new Coordinates(line, col), input.substring(index, index + len)));
         }
 
         // --------------------------------------
@@ -586,9 +583,9 @@ public class TokenList implements Iterable<Token>
             return switch (type)
             {
                 case DELIMITER -> new MatchResult(len,
-                        new Token.Delimiter(new CoordinatesOLD(line, col), val));
+                        new Token.Delimiter(new Coordinates(line, col), val));
                 case OPERATOR -> new MatchResult(len,
-                        new Token.Operator(new CoordinatesOLD(line, col), val));
+                        new Token.Operator(new Coordinates(line, col), val));
                 default -> null;
             };
         }
@@ -606,11 +603,11 @@ public class TokenList implements Iterable<Token>
             return switch (type)
             {
                 case COMMENT -> new MatchResult(matchedText.length(),
-                        new Token.Comment(new CoordinatesOLD(line, col), matchedText));
+                        new Token.Comment(new Coordinates(line, col), matchedText));
                 case LITERAL -> new MatchResult(matchedText.length(),
-                        new Token.Literal(new CoordinatesOLD(line, col), literalType, matchedText));
+                        new Token.Literal(new Coordinates(line, col), literalType, matchedText));
                 case IDENTIFIER -> new MatchResult(matchedText.length(),
-                        new Token.Identifier(new CoordinatesOLD(line, col), literalType, matchedText));
+                        new Token.Identifier(new Coordinates(line, col), literalType, matchedText));
                 default -> null;
             };
         }

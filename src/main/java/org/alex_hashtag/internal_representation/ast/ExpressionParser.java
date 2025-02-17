@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.ast;
 
 import org.alex_hashtag.errors.ParsingErrorManager;
-import org.alex_hashtag.internal_representation.expression.*;
+import org.alex_hashtag.internal_representation.expressionOld.*;
 import org.alex_hashtag.internal_representation.literals.*;
 import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 import org.alex_hashtag.tokenizationOLD.Token;

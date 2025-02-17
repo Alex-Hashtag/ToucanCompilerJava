@@ -1,11 +1,7 @@
 package org.alex_hashtag.lib.tokenization;
 
-import org.alex_hashtag.tokenizationOLD.Token;
-
 import java.math.BigInteger;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -55,45 +51,16 @@ public class TokenTransformations
      * @param lit the literal token to transform; expected to be of type "string"
      * @return a new {@link Token.Literal} with escape sequences replaced.
      */
-    public static Token.Literal processEscapeSequences(Token.Literal lit) {
+    public static Token.Literal processEscapeSequences(Token.Literal lit)
+    {
         String value = lit.value();
-        StringBuilder processed = new StringBuilder();
-
-        // Regex for escape sequences (\n, \t, \r, \\, \", \b, \f, \0, \\uXXXX)
-        Pattern pattern = Pattern.compile("\\\\([\"\\\\bfnrt0]|u[0-9a-fA-F]{4})");
-        Matcher matcher = pattern.matcher(value);
-
-        int lastIndex = 0;
-        while (matcher.find()) {
-            processed.append(value, lastIndex, matcher.start());
-
-            String match = matcher.group(1);
-            switch (match)
-            {
-                case "n" -> processed.append('\n');
-                case "t" -> processed.append('\t');
-                case "r" -> processed.append('\r');
-                case "b" -> processed.append('\b');
-                case "f" -> processed.append('\f');
-                case "0" -> processed.append('\0');
-                case "\\" -> processed.append('\\');
-                case "\"" -> processed.append('\"');
-                default ->
-                {
-                    if (match.startsWith("u"))
-                    {
-                        processed.append((char) Integer.parseInt(match.substring(1), 16));
-                    }
-                }
-            }
-
-            lastIndex = matcher.end();
-        }
-
-        // Append remaining part of the string
-        processed.append(value.substring(lastIndex));
-
-        return new Token.Literal(lit.position(), lit.type(), processed.toString());
+        String processed = value
+                .replace("\\n", "\n")
+                .replace("\\t", "\t")
+                .replace("\\r", "\r")
+                .replace("\\\"", "\"")
+                .replace("\\\\", "\\");
+        return new Token.Literal(lit.position(), lit.type(), processed);
     }
 
     /**

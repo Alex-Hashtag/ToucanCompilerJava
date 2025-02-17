@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.macros;
 
 import lombok.Getter;
-import org.alex_hashtag.internal_representation.expression.Expression;
+import org.alex_hashtag.internal_representation.expressionOld.Expression;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 

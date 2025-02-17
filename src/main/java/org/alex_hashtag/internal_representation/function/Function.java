@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.function;
 
-import org.alex_hashtag.internal_representation.expression.Expression;
-import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
+import org.alex_hashtag.internal_representation.expressionOld.Expression;
+import org.alex_hashtag.internal_representation.expressionOld.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.macros.Annotation;
 import org.alex_hashtag.internal_representation.types.Generic;

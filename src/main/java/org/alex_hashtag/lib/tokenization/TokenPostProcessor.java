@@ -1,7 +1,5 @@
 package org.alex_hashtag.lib.tokenization;
 
-import org.alex_hashtag.tokenizationOLD.Token;
-
 import java.util.*;
 import java.util.function.Function;
 

@@ -1,8 +1,5 @@
 package org.alex_hashtag.lib.tokenization;
 
-import org.alex_hashtag.tokenization.TokenPrototype;
-import org.alex_hashtag.tokenization.WhitespaceMode;
-
 import java.util.List;
 
 
