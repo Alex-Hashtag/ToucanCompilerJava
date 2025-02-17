@@ -14,6 +14,7 @@ public interface Expression
     record Binary(Coordinates coordinates, Expression left, Expression right, Token.Operator operator) implements Expression {}
 
 
+    //! PROPER RETURN TYPE EVALUATION WILL BE SAVED FOR SEMATIC ANALYSIS PHASE
     default TypeHolder getType()
     {
         return switch (this)
