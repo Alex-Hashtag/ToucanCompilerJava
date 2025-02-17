@@ -1,23 +1,21 @@
 package org.alex_hashtag.internal_representation.expression;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
-import javax.management.ConstructorParameters;
 import java.util.List;
 import java.util.Optional;
 
 public class ScopeExpression implements Expression
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String type;
     List<Expression> expressions;
 
-    public ScopeExpression (Coordinates location, List<Expression> expressions)
+    public ScopeExpression (CoordinatesOLD location, List<Expression> expressions)
     {
         this.location = location;
         this.expressions = expressions;

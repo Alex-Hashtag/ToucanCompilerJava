@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class BinaryExpression implements Expression
 {
     //try me bitch, 28 was here
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String type;
     Expression left;
     Expression right;
@@ -37,7 +37,7 @@ public class BinaryExpression implements Expression
         return "(" + left.toString() + " " + operator.getOperator() + " " + right.toString() + ")";
     }
 
-    public BinaryExpression(Expression left, Coordinates location, Operator operator, Expression right)
+    public BinaryExpression(Expression left, CoordinatesOLD location, Operator operator, Expression right)
     {
         this.left = left;
         this.location = location;

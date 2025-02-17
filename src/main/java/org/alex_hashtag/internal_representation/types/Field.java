@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.Expression;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.macros.Annotation;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public class Field implements Annotatable
 {
     Set<Annotation> annotations = new HashSet<>();
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     Map<String, String> properties = new HashMap<>();
     String type;
     String identifier;

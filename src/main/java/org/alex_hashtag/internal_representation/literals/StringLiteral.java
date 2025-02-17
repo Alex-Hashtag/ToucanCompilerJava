@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
 @Getter
 @Setter
 public class StringLiteral implements Literal {
-    private Coordinates location;
+    private CoordinatesOLD location;
     private String value;
 
     @Override

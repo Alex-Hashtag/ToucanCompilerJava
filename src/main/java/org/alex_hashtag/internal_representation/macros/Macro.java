@@ -2,8 +2,8 @@ package org.alex_hashtag.internal_representation.macros;
 
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.utils.Locatable;
-import org.alex_hashtag.tokenization.Coordinates;
-import org.alex_hashtag.tokenization.TokenStream;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
+import org.alex_hashtag.tokenizationOLD.TokenStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class Macro implements Locatable
     private final ArrayList<Arm> arms;
     private final boolean pub;
     @Getter
-    private Coordinates location;
+    private CoordinatesOLD location;
 
     /**
      * Constructor accepting the 'pub' flag.
@@ -25,7 +25,7 @@ public class Macro implements Locatable
      * @param name     Name of the macro.
      * @param pub      Indicates if the macro is public.
      */
-    public Macro(Coordinates location, String name, boolean pub)
+    public Macro(CoordinatesOLD location, String name, boolean pub)
     {
         this.location = location;
         this.name = name;

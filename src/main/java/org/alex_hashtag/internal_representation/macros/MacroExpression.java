@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.macros;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.Expression;
 import org.alex_hashtag.internal_representation.types.Type;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public class MacroExpression implements Expression
 {
 
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String name;
 
     @Override

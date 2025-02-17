@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.types;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.function.Function;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class TraitType implements Type, Generic
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String name;
     List<String> traits;
     List<VariableDeclarationExpression> genericArguments;

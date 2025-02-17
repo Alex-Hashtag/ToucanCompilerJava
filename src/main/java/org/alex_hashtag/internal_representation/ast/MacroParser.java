@@ -3,15 +3,15 @@ package org.alex_hashtag.internal_representation.macros;
 import org.alex_hashtag.errors.ParsingErrorManager;
 import org.alex_hashtag.errors.ParsingErrorManager.ErrorType;
 import org.alex_hashtag.errors.ParsingErrorManager.ParsingError;
-import org.alex_hashtag.tokenization.Coordinates;
-import org.alex_hashtag.tokenization.Token;
-import org.alex_hashtag.tokenization.TokenStream;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
+import org.alex_hashtag.tokenizationOLD.Token;
+import org.alex_hashtag.tokenizationOLD.TokenStream;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.alex_hashtag.tokenization.TokenType.*;
+import static org.alex_hashtag.tokenizationOLD.TokenType.*;
 
 
 public class MacroParser
@@ -77,7 +77,7 @@ public class MacroParser
                                   boolean isPublic,
                                   List<Macro> resultList)
     {
-        Coordinates macroCoords = macroKeyword.coordinates;
+        CoordinatesOLD macroCoords = macroKeyword.coordinates;
 
         // Skip any intervening comments
         Token current = consumeNonComment(iterator);

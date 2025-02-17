@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
@@ -11,9 +11,9 @@ import java.util.Optional;
 @Getter
 public class EmptyExpression implements Expression
 {
-    Coordinates location;
+    CoordinatesOLD location;
 
-    public EmptyExpression(Coordinates location)
+    public EmptyExpression(CoordinatesOLD location)
     {
         this.location = location;
     }

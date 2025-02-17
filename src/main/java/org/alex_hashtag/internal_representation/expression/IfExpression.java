@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class IfExpression implements Expression
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String type;
     BinaryExpression condition;
     List<Expression> statements;
@@ -23,7 +23,7 @@ public class IfExpression implements Expression
     @Setter
     boolean isElse; // For toString() purposes, doesn't actually affect the behavior of the class
 
-    public IfExpression(Coordinates location, BinaryExpression binaryExpression, List<Expression> statements, IfExpression elseExpr, boolean hasBlock, boolean b)
+    public IfExpression(CoordinatesOLD location, BinaryExpression binaryExpression, List<Expression> statements, IfExpression elseExpr, boolean hasBlock, boolean b)
     {
         this.location = location;
         this.condition = binaryExpression;

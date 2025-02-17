@@ -1,24 +1,24 @@
-package org.alex_hashtag.tokenization;
+package org.alex_hashtag.tokenizationOLD;
 
 import java.util.Optional;
 
-import static org.alex_hashtag.tokenization.TokenType.*;
+import static org.alex_hashtag.tokenizationOLD.TokenType.*;
 
 
 public class Token
 {
-    public Coordinates coordinates;
+    public CoordinatesOLD coordinates;
     public TokenType type;
     public Optional<String> internal;
 
-    private Token(Coordinates coordinates, TokenType type)
+    private Token(CoordinatesOLD coordinates, TokenType type)
     {
         this.coordinates = coordinates;
         this.type = type;
         this.internal = Optional.empty();
     }
 
-    private Token(Coordinates coordinates, TokenType type, String internal)
+    private Token(CoordinatesOLD coordinates, TokenType type, String internal)
     {
         this.coordinates = coordinates;
         this.type = type;
@@ -27,22 +27,22 @@ public class Token
 
     public static Token getStart()
     {
-        return new Token(new Coordinates(0, 0), START);
+        return new Token(new CoordinatesOLD(0, 0), START);
     }
 
     public static Token getEnd()
     {
-        return new Token(new Coordinates(0, 0), END);
+        return new Token(new CoordinatesOLD(0, 0), END);
     }
 
     public static Token basic(int row, int column, TokenType type)
     {
-        return new Token(new Coordinates(row, column), type);
+        return new Token(new CoordinatesOLD(row, column), type);
     }
 
     public static Token stored(int row, int column, TokenType type, String internal)
     {
-        return new Token(new Coordinates(row, column), type, internal);
+        return new Token(new CoordinatesOLD(row, column), type, internal);
     }
 
     public static Token from(String sequence, int row, int column)
@@ -51,12 +51,12 @@ public class Token
             if (!type.regex.isEmpty() && sequence.matches(type.regex))
             {
                 if (type.isStored())
-                    return new Token(new Coordinates(row, column), type, sequence);
+                    return new Token(new CoordinatesOLD(row, column), type, sequence);
                 else
-                    return new Token(new Coordinates(row, column), type);
+                    return new Token(new CoordinatesOLD(row, column), type);
             }
 
-        return new Token(new Coordinates(row, column), INVALID, sequence);
+        return new Token(new CoordinatesOLD(row, column), INVALID, sequence);
     }
 
     public String describeContents()

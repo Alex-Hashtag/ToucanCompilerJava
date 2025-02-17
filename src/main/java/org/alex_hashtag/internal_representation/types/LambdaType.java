@@ -2,7 +2,7 @@ package org.alex_hashtag.internal_representation.types;
 
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ public class LambdaType implements Type, Generic
     static List<String> traits;
     static List<VariableDeclarationExpression> genericArguments = List.of(new VariableDeclarationExpression("T", Mutability.CONST, "type[]"));
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String name;
 
     public LambdaType(String name)

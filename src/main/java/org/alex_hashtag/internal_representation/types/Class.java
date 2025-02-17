@@ -7,7 +7,7 @@ import org.alex_hashtag.internal_representation.expression.VariableDeclarationEx
 import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.macros.Annotatable;
 import org.alex_hashtag.internal_representation.macros.Annotation;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ public class Class implements Type, Generic, Annotatable
 
     Set<Annotation> annotations = new HashSet<>();
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     Map<String, String> properties = new HashMap<>();
     List<VariableDeclarationExpression> genericArguments = new ArrayList<>();
     @Setter

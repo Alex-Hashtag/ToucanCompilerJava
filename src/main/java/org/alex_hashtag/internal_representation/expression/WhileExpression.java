@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,13 +13,13 @@ public class WhileExpression implements Expression
 {
 
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     Expression condition;
     List<Expression> statements;
 
     boolean brackets; // For toString() purposes, doesn't actually affect the behavior of the class
 
-    public WhileExpression(Expression condition, List<Expression> statements, Coordinates location, boolean brackets)
+    public WhileExpression(Expression condition, List<Expression> statements, CoordinatesOLD location, boolean brackets)
     {
         this.brackets = brackets;
         this.condition = condition;

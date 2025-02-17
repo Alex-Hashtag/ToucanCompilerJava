@@ -1,7 +1,7 @@
 package org.alex_hashtag.internal_representation.types;
 
 import lombok.Getter;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
 public class PrimativeType implements Type
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String name;
     List<String> traits;
 

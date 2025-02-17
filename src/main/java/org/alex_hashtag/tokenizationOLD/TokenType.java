@@ -1,4 +1,4 @@
-package org.alex_hashtag.tokenization;
+package org.alex_hashtag.tokenizationOLD;
 
 public enum TokenType
 {

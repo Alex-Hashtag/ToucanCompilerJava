@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class ForExpression implements Expression {
     }
 
     @Getter
-    private Coordinates location;
+    private CoordinatesOLD location;
 
     private final LoopType type;
 
@@ -45,7 +45,7 @@ public class ForExpression implements Expression {
             ArgsListExpression initialisations,
             ArgsListExpression condition,
             ArgsListExpression updates,
-            Coordinates location,
+            CoordinatesOLD location,
             boolean hasBrackets
     ) {
         this.type = LoopType.STANDARD;
@@ -60,7 +60,7 @@ public class ForExpression implements Expression {
     public ForExpression(
             VariableDeclarationExpression element,
             Expression list,
-            Coordinates location,
+            CoordinatesOLD location,
             boolean hasBrackets
     ) {
         this.type = LoopType.FOREACH;

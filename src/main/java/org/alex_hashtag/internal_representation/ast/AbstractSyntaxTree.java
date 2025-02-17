@@ -6,7 +6,7 @@ import org.alex_hashtag.internal_representation.macros.Macro;
 import org.alex_hashtag.internal_representation.macros.MacroParser;
 import org.alex_hashtag.internal_representation.types.Field;
 import org.alex_hashtag.internal_representation.types.Type;
-import org.alex_hashtag.tokenization.TokenStream;
+import org.alex_hashtag.tokenizationOLD.TokenStream;
 
 import java.util.ArrayList;
 import java.util.List;

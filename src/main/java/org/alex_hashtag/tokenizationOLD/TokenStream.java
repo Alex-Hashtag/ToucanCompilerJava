@@ -1,4 +1,4 @@
-package org.alex_hashtag.tokenization;
+package org.alex_hashtag.tokenizationOLD;
 
 import lombok.Getter;
 import org.alex_hashtag.errors.TokenizationErrorManager;
@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.alex_hashtag.tokenization.TokenType.*;
+import static org.alex_hashtag.tokenizationOLD.TokenType.*;
 
 
 public class TokenStream implements Iterable<Token>

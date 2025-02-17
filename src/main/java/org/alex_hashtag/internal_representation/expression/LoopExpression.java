@@ -3,14 +3,14 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 import java.util.Optional;
 
 public class LoopExpression implements Expression {
     @Getter
-    private final Coordinates location;
+    private final CoordinatesOLD location;
 
     // If present, we have a loop with an iteration count (i.e. loop(x) { ... }).
     // If empty, it is simply a loop (i.e. loop { ... }).
@@ -28,7 +28,7 @@ public class LoopExpression implements Expression {
      * @param statements The loop’s body.
      * @param brackets   Whether the curly brackets were explicitly written.
      */
-    public LoopExpression(Coordinates location, List<Expression> statements, boolean brackets) {
+    public LoopExpression(CoordinatesOLD location, List<Expression> statements, boolean brackets) {
         this.location = location;
         this.statements = statements;
         this.brackets = brackets;
@@ -43,7 +43,7 @@ public class LoopExpression implements Expression {
      * @param location           The source code location.
      * @param brackets           Whether the curly brackets were explicitly written.
      */
-    public LoopExpression(Expression numberOfIterations, List<Expression> statements, Coordinates location, boolean brackets) {
+    public LoopExpression(Expression numberOfIterations, List<Expression> statements, CoordinatesOLD location, boolean brackets) {
         this.location = location;
         this.statements = statements;
         this.brackets = brackets;

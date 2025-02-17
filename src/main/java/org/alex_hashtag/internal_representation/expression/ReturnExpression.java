@@ -3,7 +3,7 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
@@ -11,10 +11,10 @@ import java.util.Optional;
 public class ReturnExpression implements Expression
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     Expression returnThis;
 
-    public ReturnExpression(Coordinates coordinates, Expression expression)
+    public ReturnExpression(CoordinatesOLD coordinates, Expression expression)
     {
         this.location = coordinates;
         this.returnThis = expression;

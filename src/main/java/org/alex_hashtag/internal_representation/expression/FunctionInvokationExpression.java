@@ -3,16 +3,15 @@ package org.alex_hashtag.internal_representation.expression;
 import lombok.Getter;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
-import java.util.List;
 import java.util.Optional;
 
 
 public class FunctionInvokationExpression implements Expression
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String type;
     Expression identifier;
     AccessChainExpression arguments;
@@ -25,7 +24,7 @@ public class FunctionInvokationExpression implements Expression
         return TypeRegistry.searchByName(type);
     }
 
-    public FunctionInvokationExpression(Expression identifier, AccessChainExpression arguments, Coordinates location, boolean methodInvocation)
+    public FunctionInvokationExpression(Expression identifier, AccessChainExpression arguments, CoordinatesOLD location, boolean methodInvocation)
     {
     }
 

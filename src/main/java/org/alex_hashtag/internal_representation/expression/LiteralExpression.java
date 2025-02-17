@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.alex_hashtag.internal_representation.literals.Literal;
 import org.alex_hashtag.internal_representation.types.Type;
 import org.alex_hashtag.internal_representation.types.TypeRegistry;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.Optional;
 
@@ -12,11 +12,11 @@ import java.util.Optional;
 public class LiteralExpression implements Expression
 {
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     String type;
     Literal literal;
 
-    public LiteralExpression(Coordinates location, Literal literal)
+    public LiteralExpression(CoordinatesOLD location, Literal literal)
     {
         this.location = location;
         this.literal = literal;

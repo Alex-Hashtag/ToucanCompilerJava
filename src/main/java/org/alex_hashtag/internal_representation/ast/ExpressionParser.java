@@ -3,9 +3,9 @@ package org.alex_hashtag.internal_representation.ast;
 import org.alex_hashtag.errors.ParsingErrorManager;
 import org.alex_hashtag.internal_representation.expression.*;
 import org.alex_hashtag.internal_representation.literals.*;
-import org.alex_hashtag.tokenization.Coordinates;
-import org.alex_hashtag.tokenization.Token;
-import org.alex_hashtag.tokenization.TokenType;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
+import org.alex_hashtag.tokenizationOLD.Token;
+import org.alex_hashtag.tokenizationOLD.TokenType;
 import org.graalvm.collections.Pair;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.alex_hashtag.errors.ParsingErrorManager.ErrorType;
 import static org.alex_hashtag.errors.ParsingErrorManager.ParsingError;
-import static org.alex_hashtag.tokenization.TokenType.*;
+import static org.alex_hashtag.tokenizationOLD.TokenType.*;
 
 
 /**
@@ -40,7 +40,7 @@ public class ExpressionParser
                                           ParsingErrorManager errorManager,
                                           TokenType... closer)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         List<Pair<Expression, Token>> expressions = new ArrayList<>();
 
         // We accumulate expressions until we hit 'closer'
@@ -164,7 +164,7 @@ public class ExpressionParser
                                    Token current,
                                    ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
 
         // Expect '(' after 'switch'
         Token open = expectNext(iterator, BRACE_OPEN, errorManager, "Expected '(' after 'switch'.");
@@ -210,7 +210,7 @@ public class ExpressionParser
                                  Token current,
                                  ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
 
         // Peek next token to see if we have '(' for iteration count
         Token next = peekNextNonComment(iterator);
@@ -267,7 +267,7 @@ public class ExpressionParser
                                    Token current,
                                    ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         // 'unsafe' is consumed, parse body as block or statement
         List<Expression> statements = parseBlockOrStatement(iterator, errorManager);
         // If it's a block, parseBlockOrStatement will capture that
@@ -290,7 +290,7 @@ public class ExpressionParser
                                         Token current,
                                         ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         // 'do' is consumed, parse block or statement
         List<Expression> statements = parseBlockOrStatement(iterator, errorManager);
 
@@ -332,7 +332,7 @@ public class ExpressionParser
                                       Token current,
                                       ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         // parse condition
         Expression condition = parseParenthesizedExpression(iterator, errorManager,
                 "Expected '(' after 'while'.");
@@ -349,7 +349,7 @@ public class ExpressionParser
                                   Token current,
                                   ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         // The '{' is already in `current`
         // parse everything inside until '}'
         List<Expression> expressions = new ArrayList<>();
@@ -370,7 +370,7 @@ public class ExpressionParser
                                Token current,
                                ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
 
         // parse condition in parentheses => if ( condition )
         Expression condition = parseParenthesizedExpression(iterator, errorManager,
@@ -424,7 +424,7 @@ public class ExpressionParser
                                          Token current,
                                          ParsingErrorManager errorManager)
     {
-        Coordinates start = current.coordinates;
+        CoordinatesOLD start = current.coordinates;
         String rawText = current.internal.orElse("");
         Literal literal;
 
@@ -639,7 +639,7 @@ public class ExpressionParser
                 ));
             }
             // Return an empty expression so we can keep parsing
-            return new EmptyExpression(new Coordinates(-1, -1));
+            return new EmptyExpression(new CoordinatesOLD(-1, -1));
         }
 
         // Parse expression up to ')'

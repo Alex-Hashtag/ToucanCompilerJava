@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.alex_hashtag.internal_representation.expression.VariableDeclarationExpression;
 import org.alex_hashtag.internal_representation.function.Function;
 import org.alex_hashtag.internal_representation.utils.Locatable;
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class Annotation implements Locatable
 {
 
     @Getter
-    Coordinates location;
+    CoordinatesOLD location;
     @Getter
     String identifier;
     VariableDeclarationExpression argument;

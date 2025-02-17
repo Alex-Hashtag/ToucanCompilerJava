@@ -1,7 +1,6 @@
 package org.alex_hashtag.internal_representation.expression;
 
-import org.alex_hashtag.tokenization.Token;
-import org.alex_hashtag.tokenization.TokenType;
+import org.alex_hashtag.tokenizationOLD.Token;
 
 
 public enum Operator

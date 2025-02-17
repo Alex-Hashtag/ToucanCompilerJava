@@ -1,6 +1,9 @@
 package org.alex_hashtag.tokenization;
 
-import org.alex_hashtag.errors.TokenizationErrorManager;
+import org.alex_hashtag.tokenizationOLD.ImportDeclaration;
+import org.alex_hashtag.tokenizationOLD.Token;
+import org.alex_hashtag.tokenizationOLD.TokenStream;
+import org.alex_hashtag.tokenizationOLD.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
-import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOut;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenStreamTest {

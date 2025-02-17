@@ -1,9 +1,9 @@
 package org.alex_hashtag.internal_representation.utils;
 
-import org.alex_hashtag.tokenization.Coordinates;
+import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 
 
 public interface Locatable
 {
-    Coordinates getLocation();
+    CoordinatesOLD getLocation();
 }
