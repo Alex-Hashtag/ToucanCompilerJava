@@ -27,7 +27,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21) // Replace 17 with your desired Java version
+        languageVersion = JavaLanguageVersion.of(23) // Replace 17 with your desired Java version
     }
 }
 

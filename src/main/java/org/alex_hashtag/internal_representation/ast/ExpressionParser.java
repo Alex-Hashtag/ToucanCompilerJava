@@ -6,7 +6,7 @@ import org.alex_hashtag.internal_representation.literals.*;
 import org.alex_hashtag.tokenizationOLD.CoordinatesOLD;
 import org.alex_hashtag.tokenizationOLD.Token;
 import org.alex_hashtag.tokenizationOLD.TokenType;
-import org.graalvm.collections.Pair;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +41,7 @@ public class ExpressionParser
                                           TokenType... closer)
     {
         CoordinatesOLD start = current.coordinates;
-        List<Pair<Expression, Token>> expressions = new ArrayList<>();
+//        List<Pair<Expression, Token>> expressions = new ArrayList<>();
 
         // We accumulate expressions until we hit 'closer'
         while (!isCloser(current.type, closer))
@@ -114,10 +114,10 @@ public class ExpressionParser
             if (next == null)
             {
                 // If we have no more tokens, break early.
-                expressions.add(Pair.create(lastExpr, null));
+//                expressions.add(Pair.create(lastExpr, null));
                 break;
             }
-            expressions.add(Pair.create(lastExpr, next));
+//            expressions.add(Pair.create(lastExpr, next));
 
 
             // Otherwise, consume the next token so we can continue.
@@ -125,10 +125,10 @@ public class ExpressionParser
                 current = consumeNonComment(iterator);
         }
 
-        if (expressions.isEmpty())
-        {
-            return new EmptyExpression(start);
-        }
+//        if (expressions.isEmpty())
+//        {
+//            return new EmptyExpression(start);
+//        }
 
 
         /**
@@ -140,10 +140,10 @@ public class ExpressionParser
 
 
         // Build the final expression from the collected segments
-        Expression result = expressions.get(0).getLeft(); // The first parsed expression=
+//        Expression result = expressions.get(0).getLeft(); // The first parsed expression=
 
 
-        return result;
+        return null;
     }
 
     /* =========================

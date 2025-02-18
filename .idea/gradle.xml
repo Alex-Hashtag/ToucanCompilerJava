@@ -6,7 +6,7 @@
       <GradleProjectSettings>
         <option name="testRunner" value="PLATFORM" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="graalvm-jdk-21" />
+        <option name="gradleJvm" value="#GRADLE_JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
