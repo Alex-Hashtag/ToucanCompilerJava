@@ -18,6 +18,9 @@ public sealed interface Expression
     record doWhile(Coordinates coordinated, List<Expression> statements, Expression condition) implements Expression {}
     record For(Coordinates coordinates, ArgsList init, ArgsList conditions, ArgsList updates) implements Expression {}
     record ForEach(Coordinates coordinates, Expression item, Expression list) implements Expression {}
+    record Switch(Coordinates coordinates, Expression compare, List<Case> cases) implements Expression {
+        record Case(Coordinates coordinates, List<Expression> pattern, Expression resolve) {}
+    }
 
     record Break(Coordinates coordinates) implements Expression {}
     record Continue(Coordinates coordinates) implements Expression {}
@@ -49,14 +52,14 @@ public sealed interface Expression
 
     sealed interface Literal extends Expression
     {
-        record Int(Coordinates coordinates, java.lang.String value) implements Literal {}
-        record Float(Coordinates coordinates, java.lang.String value) implements Literal {}
-        record Char(Coordinates coordinates, java.lang.String value) implements Literal {}
-        record Rune(Coordinates coordinates, java.lang.String value) implements Literal {}
-        record String(Coordinates coordinates, java.lang.String value) implements Literal {}
+        record Int(Coordinates coordinates, String value) implements Literal {}
+        record Float(Coordinates coordinates, String value) implements Literal {}
+        record Char(Coordinates coordinates, String value) implements Literal {}
+        record Rune(Coordinates coordinates, String value) implements Literal {}
+        record Str(Coordinates coordinates, String value) implements Literal {}
         record Array(Coordinates coordinates, IdentifierType type, Expression size, List<Expression> elements) implements Literal {}
         record Struct(Coordinates coordinates, IdentifierType type, List<VariableAssigment> assigments) implements Literal {}
-        record Enum(Coordinates coordinates, IdentifierType type, java.lang.String variant, ArgsList arguments) implements Literal {}
+        record Enum(Coordinates coordinates, IdentifierType type, String variant, ArgsList arguments) implements Literal {}
 
         //! PROPER RETURN TYPE EVALUATION WILL BE SAVED FOR SEMATIC ANALYSIS PHASE
         default TypeHolder getType()
@@ -67,7 +70,7 @@ public sealed interface Expression
                 case Float(Coordinates coordinates, _) -> new TypeHolder.Resolved(coordinates, "float64");
                 case Char(Coordinates coordinates, _) -> new TypeHolder.Resolved(coordinates, "char");
                 case Rune(Coordinates coordinates, _) -> new TypeHolder.Resolved(coordinates, "rune");
-                case String(Coordinates coordinates, _) -> new TypeHolder.Resolved(coordinates, "string");
+                case Str(Coordinates coordinates, _) -> new TypeHolder.Resolved(coordinates, "string");
                 case Literal ignored -> new TypeHolder() {};
             };
         }
