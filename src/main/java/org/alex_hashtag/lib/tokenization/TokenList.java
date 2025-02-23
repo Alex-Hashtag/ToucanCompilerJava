@@ -1,5 +1,7 @@
 package org.alex_hashtag.lib.tokenization;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -292,9 +294,9 @@ public class TokenList implements Iterable<Token>
     // ==================================================
 
     @Override
-    public Iterator<Token> iterator()
+    public @NotNull Iterator<Token> iterator()
     {
-        return new LookAheadIterator();
+        return new LookAheadIterator(tokens);
     }
 
     /**
@@ -620,31 +622,39 @@ public class TokenList implements Iterable<Token>
     /**
      * Special iterator that supports lookAhead without consuming tokens.
      */
-    public class LookAheadIterator implements Iterator<Token>
+    public static class LookAheadIterator implements Iterator<Token>
     {
         private int currentIndex = 0;
+        private final List<Token> tokens;
+
+        public LookAheadIterator(List<Token> tokens) {
+            this.tokens = tokens;
+        }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return currentIndex < tokens.size();
         }
 
         @Override
-        public Token next()
-        {
+        public Token next() {
             if (!hasNext()) throw new NoSuchElementException();
             return tokens.get(currentIndex++);
         }
 
-        public Token lookAhead(int steps)
-        {
+        public Token lookAhead(int steps) {
             int idx = currentIndex + steps;
-            if (idx < 0 || idx >= tokens.size())
-            {
+            if (idx < 0 || idx >= tokens.size()) {
                 return null;
             }
             return tokens.get(idx);
+        }
+
+        public void remove() {
+            if (currentIndex == 0) {
+                throw new IllegalStateException("No token to remove.");
+            }
+            tokens.remove(--currentIndex);
         }
     }
     // ================ END TOKENIZATION ================
